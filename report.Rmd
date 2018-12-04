@@ -1,0 +1,41 @@
+---
+title: "Report"
+author: "James Dalgleish, Joy Hsu, Rachel Tsong, Yishan Wang, Adina Zhang"
+date: "6 December 2018"
+output: html_document
+---
+
+## Motivation
+It is well known that exposure to chemicals released by industry can be a causal factor for many cancers. For this project, we wanted to know if we could use datasets that are publicly available to see if there is a geographic association between 
+
+## Related Work
+
+## Initial Questions
+
+## Data
+
+## Exploratory Analysis
+
+## Additional Analysis
+
+## Discussion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
