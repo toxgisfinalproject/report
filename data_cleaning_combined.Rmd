@@ -121,7 +121,6 @@ names(state2abb) <- tolower(state.name)
 can_inc_by_coun_st <- can_inc_by_coun %>% 
   mutate(state_abb = state2abb[state_name])
 ```
-Now, we'll merge the TRI summary data with the cancer (SEER) county-summarized data, using an inner join by county, state, and year, selecting only the merged chemical, state, county, total amount released in pounds, the type of cancer, the number of cases, and the FIPS code (stcnty as the original data called it).
 ```{r}
 rel_summary_county <- tri_temp_df_dplyr %>% 
   janitor::clean_names() %>% 
@@ -134,6 +133,7 @@ rel_summary_county <- tri_temp_df_dplyr %>%
   arrange(-total_rel_summ)
 
 ```
+Now, we'll merge the TRI summary data with the cancer (SEER) county-summarized data, using an inner join by county, state, and year, selecting only the merged chemical, state, county, total amount released in pounds, the type of cancer, the number of cases, and the FIPS code (stcnty as the original data called it).
 
 ```{r}
 county_cancer_chem <- rel_summary_county %>% 
@@ -144,7 +144,68 @@ map(county_cancer_chem, ~sum(is.na(.)))
 
 ```
 
+Population:
+```{r pop_income}
+read_excel_allsheets_dfc <- function(fn) {
+  sheets<-readxl::excel_sheets(fn)
+  sheet_list <- map2_dfc(.x = fn,.y = sheets, .f = ~readxl::read_excel(path = .x, sheet = .y))
+  return(sheet_list)
+}
+data_dict <- readxl::read_excel("census_income/Mastdata.xls") %>% janitor::clean_names()
+income_cols_desc <- data_dict %>%
+  filter(
+    str_detect(string = item_description, pattern = "Median household income") &
+    !str_detect(string = item_description, pattern = "in the past 12 months")  
+    ) %>% 
+  select("item_id","item_description") %>% 
+  mutate(year = stringr::word(item_description,-1))
+pop_cols_desc <- data_dict %>%
+  filter(
+    str_detect(string = item_description, pattern = "Resident total population estimate ") &
+    !str_detect(string = item_description, pattern = "rank")  
+    ) %>% 
+  select("item_id","item_description") %>% 
+  mutate(year = stringr::word(item_description,-1))
 
+cencode2year <- c(income_cols_desc %>% pull(year), pop_cols_desc %>% pull(year)) 
+names(cencode2year) <- c(income_cols_desc %>% pull(item_id), pop_cols_desc %>% pull(item_id))
+
+census_income_pop_all <- list("./census_income/INC01.xlsx",
+                          "./census_income/INC02.xlsx",
+                          "./census_income/INC03.xlsx",
+                          "./census_income/PVY01.xlsx",
+                          "./census_income/PVY02.xlsx",
+                          "./census_income/PST01.xlsx",
+                          "./census_income/PST02.xlsx",
+                          "./census_income/IPE01.xlsx") %>%
+  map_dfc(read_excel_allsheets_dfc) %>% 
+  select("Area_name",	"STCOU",
+income_cols_desc %>% pull(item_id),pop_cols_desc %>% pull(item_id))
+census_inc_tidy <-  census_income_pop_all %>% 
+    gather(key = year_inc, value = med_income, INC110179D:IPE010209D) %>%
+    mutate(code = year_inc,
+         year_inc = cencode2year[year_inc]) %>% 
+  select("Area_name",	"STCOU",year_inc,med_income,code)
+census_pop_tidy <-  census_income_pop_all %>% 
+  gather(key = year_pop, value = pop_est, PST015171D:PST045209D) %>%
+  mutate(code = year_pop,
+         year_pop = cencode2year[year_pop]) %>% 
+  select("Area_name",	"STCOU",year_pop,pop_est,code)
+census_income_pop_tidy <- (census_inc_tidy %>% 
+                             select(-code)) %>% 
+  inner_join((census_pop_tidy %>% select(-code)),
+             by = c("year_inc" = "year_pop","Area_name","STCOU"))
+# write_csv(census_income_pop_tidy,"census_income_pop_tidy.csv")
+# write_csv(census_pop_tidy,"census_pop_tidy.csv")
+# write_csv(census_inc_tidy,"census_inc_tidy.csv")
+# saveRDS(census_income_pop_tidy,"census_income_pop_tidy.rds")
+ saveRDS(census_pop_tidy,"census_pop_tidy.rds")
+# saveRDS(census_inc_tidy,"census_inc_tidy.rds")
+
+```
+The population estimates are then combined with the merged aggregated toxic release inventory data and the aggregated cancer cases by county, cancer type, and year.
+String padding was used to make the FIPS code from SEER compatible with the FIPS code from the census data, and incidence was calculated by the number of diagnosed cases for a specific cancer in a given year divided by the population estimate for the county for that specific year. Cancer "Prevalence" was later termed cancer "incidence" in later data analyses.
+The final variables used in this dataset contain county information, total releases, the number of cancer patients diagnosed, the type of cancer, the population estimate, and the incidence.
 ```{r}
 census_pop_tidy <- readRDS("census_pop_tidy.rds") %>% 
   mutate(year_pop = as.integer(year_pop))
