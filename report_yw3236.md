@@ -128,10 +128,10 @@ tri_common_chemicals
 
 #### Amount of waste released over time
 
-##### Amount of waste released over time in the US
+##### Amount of waste released over time in the U.S.
 
 ``` r
-stacked_yearly_release = tri_df %>% 
+stacked_yearly_release_all = tri_df %>% 
   group_by(year) %>% 
   summarize(air = round(sum(air_onsite_release)/1000000, digits = 3),
             water = round(sum(water_onsite_release)/1000000, digits = 3),
@@ -141,21 +141,27 @@ stacked_yearly_release = tri_df %>%
   arrange(-total_release) %>% 
   gather(key = waste_release_route, value = release, air:offsite) %>% 
   mutate(waste_release_route = fct_relevel(waste_release_route, 
-                                           "offsite","land", "water", "air")) %>%
-  ggplot(aes(x = year, y = release, fill = waste_release_route)) +
+                                           "offsite","land", "water", "air"))
+
+ggplot(stacked_yearly_release_all, aes(x = year, y = release, fill = waste_release_route)) +
   geom_area(position = 'stack') + 
   viridis::scale_color_viridis() + 
   labs(
+    title = "Amount of Waste Released over Time in the U.S.",
     y = "Waste Release (Million Pounds)",
     x = "Year"
   ) +
   theme_bw()
 ```
 
-##### Amount of benzene released over time in the US
+    ## Warning: Removed 4 rows containing missing values (position_stack).
+
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-3-1.png)
+
+##### Amount of benzene released over time in the U.S.
 
 ``` r
-stacked_yearly_release = tri_df %>% 
+stacked_yearly_release_benzene = tri_df %>% 
   filter(chemical == "BENZENE") %>% 
   group_by(year) %>% 
   summarize(air = round(sum(air_onsite_release)/1000000, digits = 3),
@@ -165,17 +171,22 @@ stacked_yearly_release = tri_df %>%
             total_release = round(sum(total_releases)/1000000, digits = 3)) %>% 
   arrange(-total_release) %>% 
   gather(key = waste_release_route, value = release, air:offsite) %>% 
-  mutate(waste_release_route = fct_relevel(waste_release_route, 
-                                           "offsite","land", "water", "air")) %>%
-  ggplot(aes(x = year, y = release, fill = waste_release_route)) +
+  mutate(waste_release_route = fct_relevel(waste_release_route, "offsite","land", "water", "air"))
+
+ggplot(stacked_yearly_release_benzene, aes(x = year, y = release, fill = waste_release_route)) +
   geom_area(position = 'stack') + 
   viridis::scale_color_viridis() + 
   labs(
+    title = "Amount of Benzene Released over Time in the U.S.",
     y = "Waste Release (Million Pounds)",
-    x = "Year"
+    x = "Years"
   ) +
   theme_bw()
 ```
+
+    ## Warning: Removed 4 rows containing missing values (position_stack).
+
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 In general, carcinogenic waste has decreased between 1987 to 2017, reflecting strongly on the improvements to waste management policy and practices. Most carcinogenic waste is released through the air.
 
@@ -200,7 +211,7 @@ tri_df %>%
   labs(
     title = "Geographic Distribution of Total Waste Released",
     x = "State",
-    y = "Total waste released (Millions of pounds)"
+    y = "Total Waste Released (millions of pounds)"
   ) + 
   theme_bw() + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
