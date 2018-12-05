@@ -161,6 +161,7 @@ tri_df %>%
   geom_bar(stat = "identity") + 
   viridis::scale_color_viridis() + 
   labs(
+    title = "Geographic Distribution of Total Waste Released",
     x = "State",
     y = "Total waste released (Millions of pounds)"
   ) + 
@@ -211,8 +212,9 @@ cancer_yearly %>%
   ggplot(aes(x = year, y = incidence, color = st)) + 
   geom_line() + 
   labs(
-    x = "Year",
-    y = "Cancer Incidence per 100,000 people"
+    title = "AML Cancer Incidence per 100,000 People Changes over Years",
+    x = "Years",
+    y = "AML Cancer Incidence per 100,000 People"
   ) + 
   theme_bw()
 ```
