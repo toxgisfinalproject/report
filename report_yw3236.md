@@ -103,28 +103,181 @@ tri_df = read_csv("./data/tri_df_analysis.csv")
 ``` r
 cancer_pop_df = readRDS("./data/cancer_county_chem_pop.rds")
 
-tri_common_chemicals = tri_df %>% 
+tri_df %>% 
   group_by(chemical) %>% 
   summarize(onsite_release_total = sum(on_site_release_total)) %>% 
-  arrange(-onsite_release_total)
-
-tri_common_chemicals
+  arrange(-onsite_release_total) %>%
+  knitr::kable()
 ```
 
-    ## # A tibble: 166 x 2
-    ##    chemical            onsite_release_total
-    ##    <chr>                              <dbl>
-    ##  1 STYRENE                      1183451999.
-    ##  2 DICHLOROMETHANE              1166320724.
-    ##  3 FORMALDEHYDE                  632933364.
-    ##  4 TRICHLOROETHYLENE             501959108.
-    ##  5 ACETALDEHYDE                  357033097.
-    ##  6 LEAD                          321198063.
-    ##  7 BENZENE                       318018516.
-    ##  8 ASBESTOS (FRIABLE)            285320235.
-    ##  9 TETRACHLOROETHYLENE           239930034.
-    ## 10 ACRYLONITRILE                 237024057.
-    ## # ... with 156 more rows
+| chemical                                            |  onsite\_release\_total|
+|:----------------------------------------------------|-----------------------:|
+| STYRENE                                             |            1.183452e+09|
+| DICHLOROMETHANE                                     |            1.166321e+09|
+| FORMALDEHYDE                                        |            6.329334e+08|
+| TRICHLOROETHYLENE                                   |            5.019591e+08|
+| ACETALDEHYDE                                        |            3.570331e+08|
+| LEAD                                                |            3.211981e+08|
+| BENZENE                                             |            3.180185e+08|
+| ASBESTOS (FRIABLE)                                  |            2.853202e+08|
+| TETRACHLOROETHYLENE                                 |            2.399300e+08|
+| ACRYLONITRILE                                       |            2.370241e+08|
+| CHLOROFORM                                          |            2.272341e+08|
+| ACRYLAMIDE                                          |            1.796703e+08|
+| CHROMIUM                                            |            1.476686e+08|
+| COBALT COMPOUNDS                                    |            1.354807e+08|
+| ARSENIC                                             |            1.337862e+08|
+| VINYL ACETATE                                       |            1.187563e+08|
+| POLYCHLORINATED BIPHENYLS                           |            8.819710e+07|
+| 1,3-BUTADIENE                                       |            8.642994e+07|
+| NICKEL                                              |            6.431019e+07|
+| 1,2-DICHLOROETHANE                                  |            5.165696e+07|
+| ETHYLENE OXIDE                                      |            3.265730e+07|
+| ACETAMIDE                                           |            3.147825e+07|
+| PROPYLENE OXIDE                                     |            2.993163e+07|
+| N,N-DIMETHYLFORMAMIDE                               |            2.737640e+07|
+| CARBON TETRACHLORIDE                                |            2.640848e+07|
+| VINYL CHLORIDE                                      |            2.514681e+07|
+| CREOSOTE                                            |            2.457154e+07|
+| POLYCYCLIC AROMATIC COMPOUNDS                       |            2.198131e+07|
+| 1,4-DIOXANE                                         |            1.528482e+07|
+| CADMIUM                                             |            1.523271e+07|
+| ATRAZINE                                            |            1.316943e+07|
+| DI(2-ETHYLHEXYL) PHTHALATE                          |            1.284725e+07|
+| 1,4-DICHLOROBENZENE                                 |            9.495570e+06|
+| EPICHLOROHYDRIN                                     |            9.137044e+06|
+| COBALT                                              |            8.820256e+06|
+| ETHYL ACRYLATE                                      |            4.504454e+06|
+| 4,4'-METHYLENEDIANILINE                             |            3.743413e+06|
+| HYDRAZINE SULFATE                                   |            3.303835e+06|
+| 2-NITROPROPANE                                      |            3.186937e+06|
+| BERYLLIUM                                           |            2.870927e+06|
+| CHLOROPHENOLS                                       |            2.506597e+06|
+| HYDRAZINE                                           |            2.388273e+06|
+| NITRILOTRIACETIC ACID                               |            2.369984e+06|
+| 2,4-D                                               |            2.070056e+06|
+| URETHANE                                            |            1.792155e+06|
+| TETRAFLUOROETHYLENE                                 |            1.700617e+06|
+| TETRABROMOBISPHENOL A                               |            1.698653e+06|
+| PENTACHLOROPHENOL                                   |            1.564111e+06|
+| TOLUENE-2,4-DIISOCYANATE                            |            1.496251e+06|
+| TOLUENE-2,6-DIISOCYANATE                            |            1.242169e+06|
+| TOLUENE DIISOCYANATE (MIXED ISOMERS)                |            1.086542e+06|
+| DIAMINOTOLUENE (MIXED ISOMERS)                      |            1.007648e+06|
+| ISOPRENE                                            |            9.873477e+05|
+| BENZO(G,H,I)PERYLENE                                |            9.312077e+05|
+| DICHLOROBENZENE (MIXED ISOMERS)                     |            7.894475e+05|
+| 1,2-DIBROMOETHANE                                   |            7.766721e+05|
+| O-TOLUIDINE                                         |            6.978842e+05|
+| VINYL FLUORIDE                                      |            6.443177e+05|
+| GLYCIDOL                                            |            6.425400e+05|
+| TOXAPHENE                                           |            5.353412e+05|
+| 1,3-DICHLOROPROPYLENE                               |            5.254215e+05|
+| THIOUREA                                            |            4.670070e+05|
+| NITROMETHANE                                        |            4.475246e+05|
+| HEXACHLOROBENZENE                                   |            4.278386e+05|
+| 1,2,3-TRICHLOROPROPANE                              |            3.194935e+05|
+| DIETHYL SULFATE                                     |            3.095140e+05|
+| CHLORDANE                                           |            2.203853e+05|
+| DIMETHYL SULFATE                                    |            2.013240e+05|
+| HEPTACHLOR                                          |            1.836780e+05|
+| VINYL BROMIDE                                       |            1.779020e+05|
+| 3-CHLORO-2-METHYL-1-PROPENE                         |            1.488411e+05|
+| BENZOIC TRICHLORIDE                                 |            1.382811e+05|
+| 2-ACETYLAMINOFLUORENE                               |            1.127579e+05|
+| 3,3'-DICHLOROBENZIDINE                              |            1.053667e+05|
+| 4,4'-METHYLENEBIS(2-CHLOROANILINE)                  |            1.036453e+05|
+| 2,4-D 2-ETHYLHEXYL ESTER                            |            8.709265e+04|
+| C.I. DIRECT BLUE 218                                |            6.123258e+04|
+| CHLOROMETHYL METHYL ETHER                           |            5.551380e+04|
+| 4,4'-DIAMINODIPHENYL ETHER                          |            5.385764e+04|
+| METHOXONE                                           |            5.350812e+04|
+| 2,4,6-TRICHLOROPHENOL                               |            5.332466e+04|
+| 2,4-DIAMINOTOLUENE                                  |            5.138362e+04|
+| PHENYTOIN                                           |            5.063800e+04|
+| P-CHLOROANILINE                                     |            5.022751e+04|
+| STYRENE OXIDE                                       |            4.491031e+04|
+| O-ANISIDINE                                         |            4.464470e+04|
+| P-CRESIDINE                                         |            4.314459e+04|
+| LINDANE                                             |            3.546318e+04|
+| POTASSIUM BROMATE                                   |            3.455584e+04|
+| ALPHA-NAPHTHYLAMINE                                 |            3.270593e+04|
+| FURAN                                               |            3.249139e+04|
+| 2,4-D 2-ETHYL-4-METHYLPENTYL ESTER                  |            2.953641e+04|
+| NITROFEN                                            |            2.631000e+04|
+| SODIUM O-PHENYLPHENOXIDE                            |            2.527735e+04|
+| 2,4-D BUTOXYETHYL ESTER                             |            2.483573e+04|
+| PENTACHLOROBENZENE                                  |            2.469562e+04|
+| 4,4'-METHYLENEBIS(N,N-DIMETHYL)BENZENAMINE          |            2.446300e+04|
+| 2,6-XYLIDINE                                        |            2.330929e+04|
+| N-NITROSOPIPERIDINE                                 |            2.235431e+04|
+| TRANS-1,3-DICHLOROPROPENE                           |            2.067196e+04|
+| SAFROLE                                             |            1.986666e+04|
+| N-NITROSODIETHYLAMINE                               |            1.787123e+04|
+| DIHYDROSAFROLE                                      |            1.784256e+04|
+| PROPYLENEIMINE                                      |            1.686496e+04|
+| 1,1-DIMETHYL HYDRAZINE                              |            1.681810e+04|
+| 4-AMINOAZOBENZENE                                   |            1.567200e+04|
+| MECOPROP                                            |            1.527484e+04|
+| DICHLORVOS                                          |            1.450504e+04|
+| OCTACHLOROSTYRENE                                   |            9.590259e+03|
+| ETHYLENE THIOUREA                                   |            7.782770e+03|
+| MICHLER'S KETONE                                    |            7.358000e+03|
+| CUPFERRON                                           |            6.104530e+03|
+| SACCHARIN (MANUFACTURING, NO SUPPLIER NOTIFICATION) |            6.039880e+03|
+| N-NITROSODI-N-PROPYLAMINE                           |            4.868737e+03|
+| C.I. ACID RED 114                                   |            4.487000e+03|
+| PROPANE SULTONE                                     |            3.039898e+03|
+| 2,4-D BUTYL ESTER                                   |            2.527430e+03|
+| 3,3'-DIMETHOXYBENZIDINE DIHYDROCHLORIDE             |            2.378700e+03|
+| BIS(CHLOROMETHYL) ETHER                             |            1.886030e+03|
+| 4-DIMETHYLAMINOAZOBENZENE                           |            1.697660e+03|
+| TRIS(2,3-DIBROMOPROPYL) PHOSPHATE                   |            1.667340e+03|
+| BENZIDINE                                           |            1.489088e+03|
+| ETHYLENEIMINE                                       |            1.217950e+03|
+| 2,4-DP                                              |            1.118660e+03|
+| 1,2-DIBROMO-3-CHLOROPROPANE                         |            8.907260e+02|
+| DIMETHYLCARBAMYL CHLORIDE                           |            8.851400e+02|
+| 2,2-BIS(BROMOMETHYL)-1,3-PROPANEDIOL                |            8.400000e+02|
+| POLYBROMINATED BIPHENYLS                            |            7.550000e+02|
+| 2,4-DIAMINOANISOLE SULFATE                          |            7.500000e+02|
+| THIOACETAMIDE                                       |            7.448100e+02|
+| 4-AMINOBIPHENYL                                     |            6.950000e+02|
+| 3,3'-DIMETHOXYBENZIDINE                             |            6.638900e+02|
+| DIGLYCIDYL RESORCINOL ETHER                         |            6.336180e+02|
+| C.I. DIRECT BLACK 38                                |            5.676200e+02|
+| O-TOLUIDINE HYDROCHLORIDE                           |            4.715090e+02|
+| 3,3'-DICHLOROBENZIDINE DIHYDROCHLORIDE              |            4.648800e+02|
+| 2,4-DIAMINOANISOLE                                  |            2.760000e+02|
+| CHLORENDIC ACID                                     |            2.600000e+02|
+| DIEPOXYBUTANE                                       |            2.159310e+02|
+| 3,3'-DIMETHYLBENZIDINE                              |            1.990320e+02|
+| TRYPAN BLUE                                         |            1.960600e+02|
+| N-NITROSO-N-ETHYLUREA                               |            1.858590e+02|
+| AMITROLE                                            |            1.846401e+02|
+| 2,4-D SODIUM SALT                                   |            1.594100e+02|
+| 1,2-DIPHENYLHYDRAZINE                               |            1.530900e+02|
+| N-NITROSODIMETHYLAMINE                              |            1.340000e+02|
+| BETA-NAPHTHYLAMINE                                  |            1.287800e+02|
+| C.I. SOLVENT YELLOW 34                              |            1.270000e+02|
+| N-NITROSO-N-METHYLUREA                              |            1.139290e+02|
+| N-NITROSOMETHYLVINYLAMINE                           |            1.083300e+02|
+| NITROGEN MUSTARD                                    |            1.020000e+02|
+| METHOXONE SODIUM SALT                               |            3.520000e+01|
+| BETA-PROPIOLACTONE                                  |            1.700000e+01|
+| 2,4-D CHLOROCROTYL ESTER                            |            1.441000e+01|
+| 2,4-D ISOPROPYL ESTER                               |            1.441000e+01|
+| 2,4-D PROPYLENE GLYCOL BUTYL ETHER ESTER            |            1.441000e+01|
+| N-NITROSODI-N-BUTYLAMINE                            |            1.418000e+01|
+| 2-AMINOANTHRAQUINONE                                |            0.000000e+00|
+| 3,3'-DICHLOROBENZIDINE SULFATE                      |            0.000000e+00|
+| 3,3'-DIMETHYLBENZIDINE DIHYDROCHLORIDE              |            0.000000e+00|
+| C.I. DIRECT BROWN 95                                |            0.000000e+00|
+| HEXAMETHYLPHOSPHORAMIDE                             |            0.000000e+00|
+| METHYLEUGENOL                                       |            0.000000e+00|
+| MUSTARD GAS                                         |            0.000000e+00|
+| N-NITROSOMORPHOLINE                                 |            0.000000e+00|
+| PHENOLPHTHALEIN                                     |            0.000000e+00|
 
 #### Amount of waste released over time
 
@@ -149,7 +302,7 @@ ggplot(stacked_yearly_release_all, aes(x = year, y = release, fill = waste_relea
   labs(
     title = "Amount of Waste Released over Time in the U.S.",
     y = "Waste Release (Million Pounds)",
-    x = "Year"
+    x = "Years"
   ) +
   theme_bw()
 ```
@@ -291,7 +444,7 @@ cancer_yearly %>%
   ggplot(aes(x = year, y = incidence, color = st)) + 
   geom_line() + 
   labs(
-    title = "AML Cancer Incidence per 100,000 People Changes over Years",
+    title = "AML Cancer Incidence per 100,000 People Changes over Time",
     x = "Years",
     y = "AML Cancer Incidence per 100,000 People"
   ) + 

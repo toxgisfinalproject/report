@@ -81,12 +81,11 @@ The amount of waste released from industrial factories is categorized into the s
 tri_df = read_csv("./data/tri_df_analysis.csv")
 cancer_pop_df = readRDS("./data/cancer_county_chem_pop.rds")
 
-tri_common_chemicals = tri_df %>% 
+tri_df %>% 
   group_by(chemical) %>% 
   summarize(onsite_release_total = sum(on_site_release_total)) %>% 
-  arrange(-onsite_release_total)
-
-tri_common_chemicals
+  arrange(-onsite_release_total) %>%
+  knitr::kable()
 ```
 
 #### Amount of waste released over time
@@ -112,7 +111,7 @@ ggplot(stacked_yearly_release_all, aes(x = year, y = release, fill = waste_relea
   labs(
     title = "Amount of Waste Released over Time in the U.S.",
     y = "Waste Release (Million Pounds)",
-    x = "Year"
+    x = "Years"
   ) +
   theme_bw()
 ```
@@ -215,7 +214,7 @@ cancer_yearly %>%
   ggplot(aes(x = year, y = incidence, color = st)) + 
   geom_line() + 
   labs(
-    title = "AML Cancer Incidence per 100,000 People Changes over Years",
+    title = "AML Cancer Incidence per 100,000 People Changes over Time",
     x = "Years",
     y = "AML Cancer Incidence per 100,000 People"
   ) + 
