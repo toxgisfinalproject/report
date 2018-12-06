@@ -6,11 +6,24 @@ output: html_document
 ---
 
 ## Motivation
-It is well known that exposure to chemicals released by industry can be a causal factor for many cancers. For this project, we wanted to know if we could use datasets that are publicly available to see if there is a geographic association between 
+
+It is well known that exposure to certain chemicals can be a causal factor for many cancers, and many of the chemicals released from industry are carcinogenic. For this project, we wanted to know if we could use datasets that are publicly available to see if there is a geographic association between incidences of cancer and amount of toxic waste dumping. 
 
 ## Related Work
 
 ## Initial Questions
+
+Initially, in our proposal we suggested exploring several lines of inquiry:
+* Toxic waste data
+  + What chemicals are being released? Which ones are carcinogens?
+  + What is the geographic distribution (by county, state) of chemical waste releases?
+  + What are the temporal trends of chemical waste release?
+* Census data
+  + Is there a geographic and/or temporal relationship between socio-economic status and chemical waste releases?
+* Disease
+  + Is there a geographic and/or temporal relationship between health outcomes (including cancer, asthma, birth outcomes, etc.) and chemical waste releases?
+  
+We wanted to begin our project with a broad general idea and then narrow our focus as time went on. One of the first things we focused on was selecting cancer as our main disease outcome. This was in part due to the availability of cancer data and also based on group member interest. Additionally, we looked into scientific literature to help us decide what cancers and chemicals were already shown to be linked, so that we weren't stabbing in the dark looking for associations. Based on a couple of papers, we decided that we could look at lung cancer and determine with
 
 ## Data
 
