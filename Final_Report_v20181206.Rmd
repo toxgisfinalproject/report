@@ -21,7 +21,7 @@ It is well known that exposure to certain chemicals can be a causal factor for m
 
 ## II. Related Work
 
-Extensive research has been done regarding the carcinogenicity of many toxic chemicals. A research article [“Association between Six Environmental Chemicals and Lung Cancer Incidence in the United States”](https://www.ncbi.nlm.nih.gov/pubmed/21776439) was particularly inspiring because it used publicly available datasets (Toxic Release Inventory and Surveillance, Epidemiology, and End Results) to link environmental waste to cancer. It explained what chemicals that are important determinants in lung cancer development. Based on this research article, we wanted to conduct further research to find out the relationships between major chemical waste exposures and common cancers (including lung cancer).
+Extensive research has been done regarding the carcinogenicity of many toxic chemicals. A research article [“Association between Six Environmental Chemicals and Lung Cancer Incidence in the United States”](https://www.ncbi.nlm.nih.gov/pubmed/21776439) was particularly inspiring because it used publicly available datasets (Toxic Release Inventory and Surveillance, Epidemiology, and End Results) to link environmental waste to cancer. The investigation identified several chemicals that increase risk for lung cancer. Based on this preliminary work, we wanted to conduct further research to characterize relationships between major chemical waste exposures and common cancers (including lung cancer).
 
 ## III. Initial Questions
 
