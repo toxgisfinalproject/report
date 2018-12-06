@@ -227,7 +227,7 @@ saveRDS(cancer_county_chem_pop,"cancer_county_chem_pop.rds")
 
 ```
 
-Adina's tidy code
+Adina's tidy code:
 
 ```{r}
 tri_df = tri_temp_df_dplyr %>% 
