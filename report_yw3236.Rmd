@@ -78,9 +78,9 @@ The amount of waste released from industrial factories is categorized into the s
 #### Common Carcinogens Released
 
 ```{r message = FALSE}
-tri_df = read_csv("./data/tri_df_analysis.csv")
+tri_df = readRDS("./data/tri_df.rds")
 cancer_pop_df = readRDS("./data/cancer_county_chem_pop.rds")
-
+cancer_pop_df
 tri_df %>% 
   group_by(chemical) %>% 
   summarize(onsite_release_total = sum(on_site_release_total)) %>% 
@@ -241,8 +241,8 @@ To view the trends over time, we'll show a plot of the slope estimates of the re
 ```{r}
 cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
 {    
-      if (!exists("county_cancer_chem")) {
-      county_cancer_chem = readRDS("./data/cancer_county_chem_pop.rds") %>% 
+      if (!exists("cancer_pop_df")) {
+      cancer_pop_df = readRDS("./data/cancer_county_chem_pop.rds") %>% 
       mutate(incidence = n/pop_est) }
       options(tigris_class = "sf")
       state_sf <- tigris::counties(state = spec_state) %>%
@@ -250,7 +250,7 @@ cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
       dplyr::mutate(name = tolower(name)) %>% 
       select(-metdivfp,-csafp,-cbsafp)
       
-      cancer_state_subset <- county_cancer_chem %>% 
+      cancer_state_subset <- cancer_pop_df %>% 
       filter(cancer == spec_cancer & st == spec_state) %>% 
       select(prevalence,year,cancer) %>% 
       spread(year,prevalence) %>% 
@@ -316,7 +316,7 @@ cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = T)
 A look at all 10 states in the study is shown below:
 
 ```{r}
-all_states <- county_cancer_chem %>% 
+all_states <- cancer_pop_df %>% 
   pull(st) %>% 
   unique()
 ggplist_aml <- all_states %>% 
