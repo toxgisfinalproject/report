@@ -438,7 +438,7 @@ lung_spread = cancer_chem_lung %>%
 Link Median Income from Census Data
 ```{r}
 # load census dataset for median income
-census_income_df = readRDS("census_income_pop_tidy.rds") %>% 
+census_income_df = readRDS("./data/census_income_pop_tidy.rds") %>% 
   janitor::clean_names() %>% 
   separate(area_name, into = c("county", "st"), sep = ",") %>% 
   filter(st != "NA") %>% 
@@ -463,7 +463,7 @@ Link Smoking Prevalence Data from BRFSS
 ```{r}
 # read BRFSS Data from 2010 onwards
 # calculate proportion of prior or current smokers by subtracting proportion of "Never" Smokers
-tobacco_2010_present = read_csv(file = "./data_smoke/BRFD_tobacco_2010_present.csv") %>% 
+tobacco_2010_present = read_csv(file = "./data/BRFD_tobacco_2010_present.csv") %>% 
   filter(Response == "Never") %>% 
   dplyr::select(year = "YEAR", st = "LocationAbbr", response = "Response", percent_never = "Data_Value") %>%
   janitor::clean_names() %>% 
@@ -473,7 +473,7 @@ tobacco_2010_present = read_csv(file = "./data_smoke/BRFD_tobacco_2010_present.c
   dplyr::select(year, st, percent_smoke)
   
 # read BRFSS Data from 2010 and prior
-tobacco_2010_prior = read_csv(file = "./data_smoke/BRFD_tobacco_2010_prior.csv") %>% 
+tobacco_2010_prior = read_csv(file = "./data/BRFD_tobacco_2010_prior.csv") %>% 
   filter(Response == "Never") %>% 
   dplyr::select(year = "YEAR", st = "LocationAbbr", response = "Response", percent_never = "Data_Value") %>%
   janitor::clean_names() %>% 

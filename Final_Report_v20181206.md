@@ -105,6 +105,8 @@ The amount of waste released from industrial factories is categorized into the s
 
 #### Common Carcinogens Released
 
+We wanted to first identify which chemicals we would have the most information for further analysis. Some common ones we found included notable carcinogens: styrene, formaldehyde, lead, benzene, and asbestos.
+
 ``` r
 # Group by common carcinogens and summarize counts
 tri_df = readRDS("./data/tri_df.rds")
@@ -217,6 +219,8 @@ ggplot(stacked_yearly_release_benzene, aes(x = year, y = release, fill = waste_r
 In general, carcinogenic waste has decreased between 1987 to 2017, reflecting strongly on the improvements to waste management policy and practices. Most carcinogenic waste is released through the air. It would seem that most exposure to industrial chemicals for humans would occur through the air and there might be strong information to investigate lung cancer.
 
 #### Geographic Distribution of Waste
+
+Based off of this barplot, the top five states that produce the most carcinogenic waste are Texas, Louisiana, Indiana, Ohio, and Pennsylvania. These results make sense as most manufacturing in America occurs in these states.
 
 ``` r
 # Group by state and sum waste releases for each state
@@ -455,6 +459,9 @@ VII. Additional Analysis on Lung Cancer Incidence
 To explore relationships between chemical release and lung cancer incidence, we joined datasets for Toxic Release Inventory, SEER, income data from US Census, and tobacco use from BRFSS Surveys. Since we were most interested in exposure-response relationships, we excluded chemicals reported less than 10 times, either in separate years or separate counties. For cancer incidence measures, we excluded counties with a population under 50,000, since small population sizes may lack the statistical power to detect effects in cancer risk. Next, we log-transformed quantity of chemical release into ln(pound) units; this measure had stronger linear relationships with cancer incidence. State level smoking prevalence, defined as previous or current smokers, was extracted from the BRFSS dataset for years 1996 to 2016.
 
 ``` r
+# import summarized cancer & toxicity datafile
+# exclude values where no chemical was reported
+# exclude populations under 50,000
 cancer_county_chem_pop = readRDS("./data/cancer_county_chem_pop.rds") %>% 
   janitor::clean_names() %>% 
   ungroup() %>% 
@@ -470,6 +477,7 @@ cancer_county_chem_pop = readRDS("./data/cancer_county_chem_pop.rds") %>%
 Filter for chemicals reported at least 10 times and convert each chemical to separate variable
 
 ``` r
+# lung_chemical = shortlist of chemicals reported at least 10 times for lung cancer, 62 chemicals met criteria. 
 lung_chemical = cancer_county_chem_pop %>% 
   filter(cancer == "lung") %>% 
   group_by(chemical) %>% 
@@ -477,10 +485,15 @@ lung_chemical = cancer_county_chem_pop %>%
   arrange(freq) %>% 
   filter(freq >= 10) %>% 
   dplyr::select(chemical)
+
+# lung_chemical2 = filter dataset for only lung cancer
 lung_chemical2 = cancer_county_chem_pop %>% 
   filter(cancer == "lung")
-  
+
+# cancer_chem_lung = inner join of 2 datasets above: lung_chemical + lung_chemical2  
 cancer_chem_lung = dplyr::inner_join(lung_chemical, lung_chemical2, by = "chemical")
+
+# Spread function with each chemical release as separate variable, total release as value
 lung_spread = cancer_chem_lung %>% 
   dplyr::select(-total_rel_summ) %>% 
   spread(key = chemical, value = total_rel_log) %>% 
@@ -490,20 +503,24 @@ lung_spread = cancer_chem_lung %>%
 Link Median Income from Census Data
 
 ``` r
+# load census dataset for median income
 census_income_df = readRDS("./data/census_income_pop_tidy.rds") %>% 
   janitor::clean_names() %>% 
   separate(area_name, into = c("county", "st"), sep = ",") %>% 
   filter(st != "NA") %>% 
-  purrr::map_df(tolower) %>% 
+  map_df(tolower) %>% 
   dplyr::select(year = year_inc, st, county, med_income) %>% 
   mutate(
     year = as.integer(year),
     st = str_replace(st, " ", ""))
+
+# join income and lung cancer data
+# mutate incidence to cases per 100 thousand scale
 lung_spread_income = dplyr::left_join(lung_spread, census_income_df, by = c("county" = "county", "year" = "year", "st" = "st")) %>% 
   dplyr::select(med_income, everything()) %>%
   arrange(desc(med_income)) %>% 
   mutate(
-    med_income = as.numeric(med_income) * 1000,
+    med_income = as.numeric(med_income)/1000,
     incidence_100k = round((prevalence * 100000), digits = 0)) %>% 
   dplyr::select(incidence_100k, everything())
 ```
@@ -511,6 +528,8 @@ lung_spread_income = dplyr::left_join(lung_spread, census_income_df, by = c("cou
 Link Smoking Prevalence Data from BRFSS
 
 ``` r
+# read BRFSS Data from 2010 onwards
+# calculate proportion of prior or current smokers by subtracting proportion of "Never" Smokers
 tobacco_2010_present = read_csv(file = "./data/BRFD_tobacco_2010_present.csv") %>% 
   filter(Response == "Never") %>% 
   dplyr::select(year = "YEAR", st = "LocationAbbr", response = "Response", percent_never = "Data_Value") %>%
@@ -520,6 +539,7 @@ tobacco_2010_present = read_csv(file = "./data/BRFD_tobacco_2010_present.csv") %
          year = as.numeric(year)) %>% 
   dplyr::select(year, st, percent_smoke)
   
+# read BRFSS Data from 2010 and prior
 tobacco_2010_prior = read_csv(file = "./data/BRFD_tobacco_2010_prior.csv") %>% 
   filter(Response == "Never") %>% 
   dplyr::select(year = "YEAR", st = "LocationAbbr", response = "Response", percent_never = "Data_Value") %>%
@@ -528,7 +548,11 @@ tobacco_2010_prior = read_csv(file = "./data/BRFD_tobacco_2010_prior.csv") %>%
          st = tolower(st),
          year = as.numeric(year)) %>% 
   dplyr::select(year, st, percent_smoke)
+
+
 tobacco = bind_rows(tobacco_2010_present, tobacco_2010_prior)
+
+# join smoking prevalence data with main dataset
 lung_income_tobacco = left_join(lung_spread_income, tobacco, by = c("year" = "year", "st" = "st")) %>%
   dplyr::select(percent_smoke, everything())
 ```
@@ -552,17 +576,18 @@ For every ln(pound) increase in formaldehyde release, we expect 1.4 additional c
 ``` r
 # Fit for formaldehyde
 fit_formaldehyde = lung_income_tobacco %>% 
-  lm(incidence_100k ~ formaldehyde + percent_smoke + log(med_income), data = .) 
+  lm(incidence_100k ~ formaldehyde + percent_smoke + med_income, data = .) 
+
 summary(fit_formaldehyde) %>% 
   broom::tidy() %>% knitr::kable()
 ```
 
-| term             |    estimate|   std.error|  statistic|  p.value|
-|:-----------------|-----------:|-----------:|----------:|--------:|
-| (Intercept)      |  270.055608|  37.5845373|   7.185285|        0|
-| formaldehyde     |    1.384060|   0.1925722|   7.187230|        0|
-| percent\_smoke   |    1.152674|   0.0705765|  16.332271|        0|
-| log(med\_income) |  -15.033403|   2.0829407|  -7.217394|        0|
+| term           |    estimate|  std.error|  statistic|   p.value|
+|:---------------|-----------:|----------:|----------:|---------:|
+| (Intercept)    |  17.8075791|  4.1867663|   4.253301|  2.22e-05|
+| formaldehyde   |   1.4010217|  0.1924513|   7.279876|  0.00e+00|
+| percent\_smoke |   1.1523015|  0.0706391|  16.312523|  0.00e+00|
+| med\_income    |  -0.2776292|  0.0395100|  -7.026816|  0.00e+00|
 
 ``` r
 chem_1 = summary(fit_formaldehyde) %>% 
@@ -572,7 +597,7 @@ chem_1 = summary(fit_formaldehyde) %>%
 
 **2. acrylonitrile**
 
-**Model 2 (adjusted *R*<sup>2</sup>: 0.29, p-value: &lt; 0.05):** Lung Cancer Incidence = 24.37 + 4.09 \* ln(pounds acrylonitrile release) + 8.23e-01 \* (percent current/previous smokers) - 1.798e-07 \* (median income)
+**Model 2 (adjusted *R*<sup>2</sup>: 0.29, p-value: &lt; 0.05):** Lung Cancer Incidence = 24.37 + 4.09 \* ln(pounds acrylonitrile release) + 8.23e-01 \* (percent current/previous smokers) - 0.18 \* (median income)
 
 For every ln(pound) increase in formaldehyde release, we expect 4.09 additional cases of of lung cancer per 100,000 persons (p-value &lt; 0.01), adjusting for smoking prevalence and median income.
 
@@ -580,6 +605,7 @@ For every ln(pound) increase in formaldehyde release, we expect 4.09 additional 
 # Fit for acrylonitrile
 fit_acrylonitrile = lung_income_tobacco %>% 
   lm(incidence_100k ~ acrylonitrile + percent_smoke + med_income, data = .) 
+
 summary(fit_acrylonitrile) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -589,7 +615,7 @@ summary(fit_acrylonitrile) %>%
 | (Intercept)    |  24.3663931|  11.3766476|   2.141790|  0.0327664|
 | acrylonitrile  |   4.0944236|   0.5693109|   7.191894|  0.0000000|
 | percent\_smoke |   0.8232187|   0.1873149|   4.394838|  0.0000140|
-| med\_income    |  -0.0000002|   0.0000001|  -1.618182|  0.1063498|
+| med\_income    |  -0.1797664|   0.1110915|  -1.618182|  0.1063498|
 
 ``` r
 chem_2 = summary(fit_acrylonitrile) %>% 
@@ -599,7 +625,7 @@ chem_2 = summary(fit_acrylonitrile) %>%
 
 **3. 1,3-butadiene**
 
-**Model 3 (adjusted *R*<sup>2</sup>: 0.41, p-value: &lt; 0.05):** Lung Cancer Incidence = 8.32 + 2.24 \* ln(pounds 1,3-butadiene release) + 1.56 \* (percent current/previous smokers) - 3.90e-07 \* (median income)
+**Model 3 (adjusted *R*<sup>2</sup>: 0.41, p-value: &lt; 0.05):** Lung Cancer Incidence = 8.32 + 2.24 \* ln(pounds 1,3-butadiene release) + 1.56 \* (percent current/previous smokers) - 0.39 \* (median income)
 
 For every ln(pound) increase in 1,3-butadiene release, we expect 2.24 additional cases of of lung cancer per 100,000 persons (p-value &lt; 0.01), adjusting for smoking prevalence and median income.
 
@@ -607,6 +633,7 @@ For every ln(pound) increase in 1,3-butadiene release, we expect 2.24 additional
 # Fit for x1_3_butadiene
 fit_butadiene = lung_income_tobacco %>% 
   lm(incidence_100k ~ x1_3_butadiene + percent_smoke + med_income, data = .) 
+
 summary(fit_butadiene) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -616,7 +643,7 @@ summary(fit_butadiene) %>%
 | (Intercept)      |   8.3154044|  8.1476253|   1.020592|  0.3078187|
 | x1\_3\_butadiene |   2.2447643|  0.3815991|   5.882520|  0.0000000|
 | percent\_smoke   |   1.5632049|  0.1062535|  14.712025|  0.0000000|
-| med\_income      |  -0.0000004|  0.0000001|  -4.202328|  0.0000300|
+| med\_income      |  -0.3894833|  0.0926827|  -4.202328|  0.0000300|
 
 ``` r
 chem_3 = summary(fit_butadiene) %>% 
@@ -635,6 +662,7 @@ For every ln(pound) increase in epichlorohydrin release, we expect 2.18 addition
 # Fit for epichlorohydrin
 fit_epichlorohydrin = lung_income_tobacco %>% 
   lm(incidence_100k ~ epichlorohydrin, data = .) 
+
 summary(fit_epichlorohydrin) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -652,7 +680,7 @@ chem_4 = summary(fit_epichlorohydrin) %>%
 
 **5. vinyl-acetate**
 
-**Model 5 (adjusted *R*<sup>2</sup>: 0.20, p-value: &lt; 0.05):** Lung Cancer Incidence = 105 + 0.61 \* ln(pounds vinyl-acetate release) - 7.938e-07 \* (median income)
+**Model 5 (adjusted *R*<sup>2</sup>: 0.20, p-value: &lt; 0.05):** Lung Cancer Incidence = 105 + 0.61 \* ln(pounds vinyl-acetate release) - 0.79 \* (median income)
 
 In a regression model, vinyl-acetate release approaches significance (p-value = 0.07) as a predictor of lung cancer incidence, adjusting for median income. For every ln(pound) increase in vinyl-acetate release, we expect 0.69 additional cases of of lung cancer per 100,000 persons (p-value &lt; 0.01).
 
@@ -660,6 +688,7 @@ In a regression model, vinyl-acetate release approaches significance (p-value = 
 # Fit for vinyl_acetate
 fit_vinyl_acetate = lung_income_tobacco %>% 
   lm(incidence_100k ~ vinyl_acetate + med_income, data = .) 
+
 summary(fit_vinyl_acetate) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -668,7 +697,7 @@ summary(fit_vinyl_acetate) %>%
 |:---------------|------------:|----------:|-----------:|----------:|
 | (Intercept)    |  105.4291723|  4.8277756|   21.838043|  0.0000000|
 | vinyl\_acetate |    0.6085737|  0.3341701|    1.821149|  0.0690524|
-| med\_income    |   -0.0000008|  0.0000001|  -11.635854|  0.0000000|
+| med\_income    |   -0.7938396|  0.0682236|  -11.635854|  0.0000000|
 
 ``` r
 chem_5 = summary(fit_vinyl_acetate) %>% 
@@ -679,7 +708,7 @@ chem_5 = summary(fit_vinyl_acetate) %>%
 
 **6. ethyl-acrylate**
 
-**Model 6 (adjusted *R*<sup>2</sup>: 0.25, p-value: &lt; 0.05):** Lung Cancer Incidence = 60.63 + 1.24 \* ln(pounds ethyl-acrylate release) + 0.88 \* (percent current/previous smokers) - 7.257e-07 \* (median income)
+**Model 6 (adjusted *R*<sup>2</sup>: 0.25, p-value: &lt; 0.05):** Lung Cancer Incidence = 60.63 + 1.24 \* ln(pounds ethyl-acrylate release) + 0.88 \* (percent current/previous smokers) - 0.72 \* (median income)
 
 For every ln(pound) increase in ethyl-acrylate release, we expect 1.24 additional cases of of lung cancer per 100,000 persons (p-value &lt; 0.01), adjusting for smoking prevalence and median income.
 
@@ -687,6 +716,7 @@ For every ln(pound) increase in ethyl-acrylate release, we expect 1.24 additiona
 # Fit for ethyl_acrylate
 fit_ethyl_acrylate = lung_income_tobacco %>% 
   lm(incidence_100k ~ ethyl_acrylate + percent_smoke + med_income, data = .) 
+
 summary(fit_ethyl_acrylate) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -696,7 +726,7 @@ summary(fit_ethyl_acrylate) %>%
 | (Intercept)     |  60.6302865|  8.9376051|   6.783728|  0.0000000|
 | ethyl\_acrylate |   1.2382589|  0.4327826|   2.861157|  0.0044601|
 | percent\_smoke  |   0.8824776|  0.1655538|   5.330458|  0.0000002|
-| med\_income     |  -0.0000007|  0.0000001|  -7.954172|  0.0000000|
+| med\_income     |  -0.7257167|  0.0912372|  -7.954172|  0.0000000|
 
 ``` r
 chem_6 = summary(fit_ethyl_acrylate) %>% 
@@ -715,6 +745,7 @@ Trans-1,3-dichloropropene is an organochlorine compound primarily used in farmin
 # Fit for trans-1,3-dichloropropene
 fit_dichloropropene = lung_income_tobacco %>% 
   lm(incidence_100k ~ trans_1_3_dichloropropene, data = .) 
+
 summary(fit_dichloropropene) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -736,6 +767,7 @@ chem_7 = summary(fit_dichloropropene) %>%
 The table below shows the estimated slope coefficients for each chemical in our linear models.
 
 ``` r
+# summary table for beta1 coefficients
 beta1_table = bind_rows(chem_1, chem_2, chem_3, chem_4, chem_5, chem_6, chem_7) %>% 
   arrange(term) %>% 
   mutate(
@@ -752,15 +784,18 @@ beta1_table
 | acrylonitrile             |            4.09|       0.57|       7.19|  0.0000000|
 | epichlorohydrin           |            2.18|       0.33|       6.69|  0.0000000|
 | ethyl-acrylate            |            1.24|       0.43|       2.86|  0.0044601|
-| formaldehyde              |            1.38|       0.19|       7.19|  0.0000000|
+| formaldehyde              |            1.40|       0.19|       7.28|  0.0000000|
 | trans-1,3-dichloropropene |            4.78|       0.22|      22.19|  0.0000000|
 | vinyl-acetate             |            0.61|       0.33|       1.82|  0.0690524|
 
 ### Visualization of 7 Chemicals & Lung Cancer Incidence
 
-The plot below shows the relationship between lung cancer incidence and the total amount of chemicals released per county per year for the seven chemicals that we found to be significantly correlated to lung cancer incidence.
+We created a scatterplot that shows the relationship between lung cancer incidence and the total amount of chemicals released per county per year for the seven chemicals that we found to be significantly correlated to lung cancer incidence.
+
+Please visit our plotly visualization [here.](https://toxgisfinalproject.github.io/toxcancer.github.io/about.html)
 
 ``` r
+# plotly scatterplot with 7 chemicals 
 plotly::plot_ly(data = lung_spread_income, text = ~paste("State: ", st, '<br>County: ', county, '<br>Year: ', year), colors = "Set1") %>%
   add_trace(x = ~acrylonitrile, y = ~incidence_100k, color = I("tomato"), name = 'acrylonitrile', opacity = 0.8) %>% 
   add_trace(x = ~epichlorohydrin, y = ~incidence_100k, color = I("orange"), name = 'epichlorohydrin', opacity = 0.8) %>% 
@@ -774,6 +809,44 @@ plotly::plot_ly(data = lung_spread_income, text = ~paste("State: ", st, '<br>Cou
          yaxis = list(title = "Lung Cancer Incidence per 100 Thousand per Year"))
 ```
 
+### Industry Contributors
+
+Because we found the seven chemicals above to be correlated to cancer incidences, we wanted to figure out which industries were responsible for the most releases of each chemical. Below is a graph showing the percent contribution of different industries to the total amount released. The chemical industry is by far the largest contributor to most of the carcinogens. Our model suggests that environmental exposure to chemicals released by these industries may contribute to lung cancer incidence.
+
+``` r
+lung_chemicals = tri_df %>%
+  filter(chemical == "FORMALDEHYDE" | chemical == "ACRYLONITRILE" | chemical == "1,3-BUTADIENE" | chemical == "EPICHLOROHYDRIN" | chemical == "VINYL ACETATE" | chemical == "ETHYL ACRYLATE" | chemical =="TRANS-1,3-DICHLOROPROPENE")
+
+# sum of total amount of chemical released per industry
+industry_released = lung_chemicals %>%
+  group_by(chemical, industry_sector) %>%
+  summarize(total_per_industry = sum(total_releases))
+
+# sum of total amount of chemical released
+total_released = lung_chemicals %>%
+  group_by(chemical) %>%
+  summarize(total_release = sum(total_releases))
+
+# chemicals relating to lung cancer with a new variable showing percent each industry contributes
+# filter to not include industries that contribute less than 1% to total released
+lung_percent = inner_join(total_released, industry_released) %>%
+  mutate(percent_released = total_per_industry/total_release) %>%
+  filter(percent_released > .01) 
+
+# visualization showing percent contribution from each industry
+lung_percent %>%
+  mutate(industry_sector = fct_reorder(industry_sector, percent_released)) %>%
+  ggplot(aes(x = chemical, y = percent_released, fill = industry_sector)) +
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(reverse=TRUE, title = NULL)) +
+  coord_flip() +
+  labs(x = "Chemical", y = "Percent Released", title = "Percent Contribution of Carcinogens Released by Industry")
+```
+
+![](Final_Report_v20181206_files/figure-markdown_github/unnamed-chunk-23-1.png)
+
 VIII. Discussion
 ----------------
 
@@ -786,11 +859,3 @@ We identified that most carcinogens in the United States are released through th
 We recognize that there are many contributing factors towards cancer incidence and our analysis on lung cancer is a simple model of a complex disease. There are several confounders such as rural/urban location and population density that were unaccounted. We also don’t propose that these trends happen at the national level as we only have data on ten states. In the future, we would want to adjust for additional confounding variables to better understand the effect of industrial waste on cancer outcomes. Finding more specific measurements of exposure and disease such as age-adjusted cancer incidences or patient’s distance from industrial factories would benefit our analysis as well.
 
 Observers of our project should be careful to not conclude causation from our model and visualizations. These tools are meant to better inform individuals about the environmental hazards in their states. However, we hope that our website and data tools can help researchers to explore new hypotheses or evaluate well-established ones.
-
-### Future Direction
-
-We recognize that there are many contributing factors towards cancer incidence and our analysis on lung cancer is a simple model of a complex disease. In the future we would want to adjust for additional confounding variables to better understand the effect of industrial waste on cancer outcomes. Finding more specific measurements of exposure and disease such as age-adjusted cancer incidences or patient’s distance from industrial factories would benefit our analysis as well.
-
-Users should be careful to not conclude causation from our model and visualizations. These tools are meant to better inform individuals about the environmental hazards in their states. However, we hope that our website and data tools can help researchers to explore new hypotheses or evaluate well-established ones.
-
-There are two future directions that are generated by our project. First, exposure to certain chemicals can be a causal factor for lung cancer, however, certain gene mutations can also predict lung cancer. Future research could be conducted by analyzing lung cancer patients’ gene information and add it as a potential predictor in the regression model that we produced in the additional analysis. Second, waste management policy could be improved by taking advantage of the information provided in our project.
