@@ -503,7 +503,7 @@ $*$ median income (in thousands) was adjusted for at the county level, by year.
 
 $**$ percent of current/previous smokers was adjusted for at the state level, by year.
 
-#####**1. Formaldehyde**
+#### 1. Formaldehyde
 
 **Model 1 (adjusted $R^2$: 0.21, p-value: < 0.05):** Lung Cancer Incidence = 17.81 + 1.40 $*$ ln(pounds formaldehyde release) + 1.15 $*$ (percent current/previous smokers) - 2.77e-7 $*$ (median income)
 
@@ -522,7 +522,7 @@ summary(fit_formaldehyde) %>%
   broom::tidy() %>% knitr::kable()
 ```
 
-#####**2. acrylonitrile**
+#### 2. acrylonitrile
 
 **Model 2 (adjusted $R^2$: 0.29, p-value: < 0.05):** Lung Cancer Incidence = 24.37 + 4.09 $*$ ln(pounds acrylonitrile release) + 8.23e-01 $*$ (percent current/previous smokers) - 0.18 $*$ (median income)
 
@@ -541,7 +541,7 @@ summary(fit_acrylonitrile) %>%
   broom::tidy() %>% knitr::kable()
 ```
 
-#####**3. 1,3-butadiene**
+#### 3. 1,3-butadiene
 
 **Model 3 (adjusted $R^2$: 0.41, p-value: < 0.05):** Lung Cancer Incidence = 8.32 + 2.24 $*$ ln(pounds 1,3-butadiene release) + 1.56 $*$ (percent current/previous smokers) - 0.39 $*$ (median income)
 
@@ -561,7 +561,7 @@ summary(fit_butadiene) %>%
   broom::tidy() %>% knitr::kable()
 ```
 
-#####**4. epichlorohydrin**
+#### 4. epichlorohydrin
 
 **Model 4 (adjusted $R^2$: 0.15, p-value: < 0.05):** Lung Cancer Incidence = 59.58 + 2.18 $*$ ln(pounds epichlorohydrin release)
 
@@ -580,7 +580,7 @@ summary(fit_epichlorohydrin) %>%
   broom::tidy() %>% knitr::kable()
 ```
 
-#####**5. vinyl-acetate**
+#### 5. vinyl-acetate
 
 **Model 5 (adjusted $R^2$: 0.20, p-value: < 0.05):** Lung Cancer Incidence = 105 + 0.61 $*$ ln(pounds vinyl-acetate release) - 0.79  $*$ (median income)
 
@@ -600,7 +600,7 @@ summary(fit_vinyl_acetate) %>%
   broom::tidy() %>% knitr::kable()
 ```
 
-#####**6. ethyl-acrylate**
+#### 6. ethyl-acrylate
 
 **Model 6 (adjusted $R^2$: 0.25, p-value: < 0.05):** Lung Cancer Incidence = 60.63 + 1.24 $*$ ln(pounds ethyl-acrylate release) + 0.88 $*$ (percent current/previous smokers) - 0.72 $*$ (median income)
 
@@ -620,7 +620,7 @@ summary(fit_ethyl_acrylate) %>%
   broom::tidy() %>% knitr::kable()
 ```
 
-#####**7. trans-1,3-dichloropropene**
+####**7. trans-1,3-dichloropropene**
 
 **Model 7 (adjusted $R^2$: 0.90, p-value: < 0.05):** Lung Cancer Incidence = 39.57 + 4.78 $*$ ln(pounds trans-1,3-dichloropropene release)
 
