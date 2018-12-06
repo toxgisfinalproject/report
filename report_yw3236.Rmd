@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = T)
 library(tidyverse)
 ```
 
@@ -315,7 +315,7 @@ cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = T)
 
 A look at all 10 states in the study is shown below:
 
-```{r}
+```{r, all_state_slope_aml, fig.height = 20, fig.width = 20, fig.align = "center"}
 all_states <- cancer_pop_df %>% 
   pull(st) %>% 
   unique()

@@ -751,7 +751,7 @@ library(patchwork)
 patchwork::wrap_plots(ggplist_aml) + plot_layout(ncol = 4)
 ```
 
-![](report_yw3236_files/figure-markdown_github/unnamed-chunk-10-1.png)
+<img src="report_yw3236_files/figure-markdown_github/all_state_slope_aml-1.png" style="display: block; margin: auto;" />
 
 ### Combined TRI and SEER Geographic Association
 
