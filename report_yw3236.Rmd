@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r include = FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = T)
+knitr::opts_chunk$set(echo = TRUE, cache = T, message = FALSE, warning = FALSE)
 library(tidyverse)
 ```
 
@@ -77,10 +77,11 @@ The amount of waste released from industrial factories is categorized into the s
 
 #### Common Carcinogens Released
 
-```{r message = FALSE}
+```{r}
 tri_df = readRDS("./data/tri_df.rds")
 cancer_pop_df = readRDS("./data/cancer_county_chem_pop.rds")
 cancer_pop_df
+
 tri_df %>% 
   group_by(chemical) %>% 
   summarize(onsite_release_total = sum(on_site_release_total)) %>% 
@@ -238,7 +239,7 @@ cancer_yearly %>%
 
 To view the trends over time, we'll show a plot of the slope estimates of the regression model with cancer incidence over time for the ten states available with seer data during the years 1987-2009. Positive slope estimates correspond to an increase in cancer incidence (number of cases per 100,000 persons) while negative slopes indicate a decreasing trend. We'll show AML slopes in california as an example and leave it to the user to explore the leaflet application we have developed.
 
-```{r}
+```{r results = "hide"}
 cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
 {    
       if (!exists("cancer_pop_df")) {
@@ -310,7 +311,7 @@ cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
       return(slope_plot)
 }
 
-cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = T)
+cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = F)
 ```
 
 A look at all 10 states in the study is shown below:
@@ -321,49 +322,41 @@ all_states <- cancer_pop_df %>%
   unique()
 ggplist_aml <- all_states %>% 
   map(.x = ., .f = cancer_slope_plot, spec_cancer = "AML", print = F)
+
 library(patchwork)
 patchwork::wrap_plots(ggplist_aml) + plot_layout(ncol = 4)
 ```
 
-### Combined TRI and SEER Geographic Association 
+### TRI-SEER Dashboard
 
-#### Geographic Distribution of Cancers Relative to Industrial Waste Sites. (James’ choropleth)
+In the exploratory dashboard, we present several interactive plots that allow for users to explore industrial waste release and cancer incidences across different states and counties. These plots are derived from our exploratory analysis and take advantage of the Shiny web app interactivity that gives the user control to choose specific chemicals and cancers they might be interested in.  
 
-[side by side combined-- AML and Benzene]
-[Pleura and Lung?]
+The interactive map allows you to visualize a state with several layers of data. One layer shows the including cancer slope in the given state (giving an idea of cancer trends, whether positive or negative in the given county). Further, an overlapping layer shows the relative amount of chemicals released in the county and a color scale is given for each layer. Three additional layers give the user the precise locations of the release sites for air, water, and land releases, and the circles are larger for larger releasing sites. Popup bubbles, upon clicking on a county shape, give actual values for slope and total release amount in the given county.
 
-### Dashboard
+Slope represents the estimated change in cancer incidence per 100,000 individuals from 1987 to 2009. Darker colors indicate decreasing cancer incidence over time while lighter colors indicate increasing cancer incidence over time.
 
-In the exploratory dashboard, we present several interactive plots that allow for users to explore industrial waste release and cancer incidences across different states and counties. These plots are derived from our exploratory analysis and take advantage of the Shiny web app’s interactivity that gives the user control to choose specific chemicals and cancers they might be interested in. 
-
-An interactive map…..
-Two plots that show chemical waste release and cancer incidence over time allows the user to better visualize trends. 
+Cancer incidence over time is visualized in a spaghetti plot representing ten states in the US. Users can select different cancers they are interested in and visualize time trends. A second plot derived from the TRI dataset shows industrial waste released over time and can be filtered to examine different chemicals in different states. The stacked line plot shows the contribution of different waste release routes (air, water, land, offsite) to the total sum of waste released.
 
 ## VII. Additional Analysis
 
-We investigated the relationship between chemical release and lung cancer incidence, at the county level, for seven known carcinogens. Multiple linear regression models were fitted with lung cancer incidence (per 100,000 individuals per year) as the main response and chemical release (log-pounds, by year) as the main effect. We adjusted for median income$*$ as a proxy for socioeconomic status and percent of current/previous smokers$**$. 
 
-$*$ median income (in thousands) was adjusted for at the county level, by year. 
-
-$**$ percent of current/previous smokers was adjusted for at the state level, by year.
-
-**1. Formaldehyde**
-
-**Model 1 (adjusted $R^2$: 0.21, p-value: < 0.05):** Lung Cancer Incidence = 17.81 + 1.40 $*$ ln(pounds formaldehyde release) + 1.15 $*$ (percent current/previous smokers) - 2.77e-7 $*$ (median income)
-
-We conclude that formaldehyde release is a significant predictor of lung cancer incidence, adjusting for smoking rates and median income. For every ln(pound) increase in formaldehyde release, we expect 1.4 additional case of of lung cancer per 100,000 persons (p-value < 0.01).  
 
 ## VIII. Discussion
 
 ### Future Direction
 
-There are two future directions that are generated by our project. First, exposing to certain chemicals can be a causal factor for lung cancer, however, certain gene mutations can also predict lung cancer. Future research could be conducted by analyzing lung cancer patients’ gene information and add it as a potential predictor in the regression model that we produced in the additional analysis. Second, waste management policy could be improved by taking advantage of the information provided in our project. 
+We recognize that there are many contributing factors towards cancer incidence and our analysis on lung cancer is a simple model of a complex disease. In the future we would want to adjust for additional confounding variables to better understand the effect of industrial waste on cancer outcomes. Finding more specific measurements of exposure and disease such as age-adjusted cancer incidences or patient’s distance from industrial factories would benefit our analysis as well.
 
- 
+Users should be careful to not conclude causation from our model and visualizations. These tools are meant to better inform individuals about the environmental hazards in their states. However, we hope that our website and data tools can help researchers to explore new hypotheses or evaluate well-established ones.  
+
+There are two future directions that are generated by our project. First, exposure to certain chemicals can be a causal factor for lung cancer, however, certain gene mutations can also predict lung cancer. Future research could be conducted by analyzing lung cancer patients’ gene information and add it as a potential predictor in the regression model that we produced in the additional analysis. Second, waste management policy could be improved by taking advantage of the information provided in our project. 
+
+
 
 Extra: Slope is defined as the coefficient estimate abstracted from a simple linear regression with incidence (per 100,000 persons) as the response and year as the predictor. 
 
 Incidence: New cancer cases per 100,000 persons, at the county level.
+
 
 
 

@@ -11,7 +11,7 @@ It is well known that exposure to certain chemicals can be a causal factor for m
 II. Related Work
 ----------------
 
-Extensive research has been done regarding the carcinogenicity of many toxic chemicals. A research article â€œAssociation between Six Environmental Chemicals and Lung Cancer Incidence in the United Statesâ€ was particularly inspiring because it used publicly available datasets (Toxic Release Inventory and Surveillance, Epidemiology, and End Results) to link environmental waste to cancer. It explained what chemicals that are important determinants in lung cancer development. Based on this research article, we wanted to conduct further research to find out the relationships between major chemical waste exposures and common cancers (including lung cancer).
+Extensive research has been done regarding the carcinogenicity of many toxic chemicals. A research article “Association between Six Environmental Chemicals and Lung Cancer Incidence in the United States” was particularly inspiring because it used publicly available datasets (Toxic Release Inventory and Surveillance, Epidemiology, and End Results) to link environmental waste to cancer. It explained what chemicals that are important determinants in lung cancer development. Based on this research article, we wanted to conduct further research to find out the relationships between major chemical waste exposures and common cancers (including lung cancer).
 
 III. Initial Questions
 ----------------------
@@ -59,7 +59,7 @@ This tidy dataset was then formed by performing an inner join by county, state, 
 
 -   [Census Data](https://www.census.gov/support/USACdataDownloads.html)
 
-Population estimates for each county by year were then obtained from the census bureau website (<https://www.census.gov/support/USACdataDownloads.html>) by the following process: Census codes were obtained from the master datasheet (â€œMastdata.xlsâ€) for every year from 1979 to 2009. Utilizing a custom function to read all the sheets from an excel file into a list of sheets, several individual excel files were read in after conversion to xlsx format (INC01 to INC03, PVY01 to PVY02, PST01 and PST02, and IPE01). Area name and fips were extracted along with the columns for income and population estimates for the respective year. These columns were converted from wide to long format and census codes naming the original columns were resolved to years. Two dataframes resulted from this, one for median household income by county and one for population estimates. Given time constraints, we aimed to use the population estimates and merged them to the aggregated seer and tri facility data. Population data was then joined to the joined cancer-tri data by state-county fips code and year.
+Population estimates for each county by year were then obtained from the census bureau website (<https://www.census.gov/support/USACdataDownloads.html>) by the following process: Census codes were obtained from the master datasheet (“Mastdata.xls”) for every year from 1979 to 2009. Utilizing a custom function to read all the sheets from an excel file into a list of sheets, several individual excel files were read in after conversion to xlsx format (INC01 to INC03, PVY01 to PVY02, PST01 and PST02, and IPE01). Area name and fips were extracted along with the columns for income and population estimates for the respective year. These columns were converted from wide to long format and census codes naming the original columns were resolved to years. Two dataframes resulted from this, one for median household income by county and one for population estimates. Given time constraints, we aimed to use the population estimates and merged them to the aggregated seer and tri facility data. Population data was then joined to the joined cancer-tri data by state-county fips code and year.
 
 VI. Exploratory Analysis
 ------------------------
@@ -144,9 +144,7 @@ ggplot(stacked_yearly_release_all, aes(x = year, y = release, fill = waste_relea
   theme_bw()
 ```
 
-    ## Warning: Removed 4 rows containing missing values (position_stack).
-
-![](report_yw3236_files/figure-markdown_github/unnamed-chunk-22-1.png)
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 ##### Amount of Benzene Released over Time in the U.S.
 
@@ -174,9 +172,7 @@ ggplot(stacked_yearly_release_benzene, aes(x = year, y = release, fill = waste_r
   theme_bw()
 ```
 
-    ## Warning: Removed 4 rows containing missing values (position_stack).
-
-![](report_yw3236_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 In general, carcinogenic waste has decreased between 1987 to 2017, reflecting strongly on the improvements to waste management policy and practices. Most carcinogenic waste is released through the air.
 
@@ -207,9 +203,7 @@ tri_df %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-    ## Selecting by total_release
-
-![](report_yw3236_files/figure-markdown_github/unnamed-chunk-24-1.png)
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 Based off of this barplot, the top five states that produce the most carcinogenic waste are Texas, Louisiana, Indiana, Ohio, and Pennsylvania.
 
@@ -223,11 +217,7 @@ top_industry_waste = tri_df %>%
   summarize(release_total = round(sum(total_releases)/1000000, digits = 3)) %>% 
   arrange(-release_total) %>%
   top_n(12)
-```
 
-    ## Selecting by release_total
-
-``` r
 colnames(top_industry_waste)[colnames(top_industry_waste) == "release_total"] = "release_total (in million)" 
 
 top_industry_waste %>% 
@@ -258,11 +248,7 @@ top_industry_benzene = tri_df %>%
   summarize(release_total = round(sum(total_releases)/1000000, digits = 3)) %>% 
   arrange(-release_total) %>% 
   top_n(5)
-```
 
-    ## Selecting by release_total
-
-``` r
 colnames(top_industry_benzene)[colnames(top_industry_benzene) == "release_total"] = "release_total (in million)" 
 
 top_industry_benzene %>% 
@@ -306,7 +292,7 @@ cancer_yearly %>%
   theme_bw()
 ```
 
-![](report_yw3236_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ##### AML Slopes in California
 
@@ -384,14 +370,10 @@ cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
       return(slope_plot)
 }
 
-cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = T)
+cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = F)
 ```
 
-    ## Using FIPS code '06' for state 'CA'
-
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-
-![](report_yw3236_files/figure-markdown_github/unnamed-chunk-28-1.png)![](report_yw3236_files/figure-markdown_github/unnamed-chunk-28-2.png)
+![](report_yw3236_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 A look at all 10 states in the study is shown below:
 
@@ -401,59 +383,36 @@ all_states <- cancer_pop_df %>%
   unique()
 ggplist_aml <- all_states %>% 
   map(.x = ., .f = cancer_slope_plot, spec_cancer = "AML", print = F)
-```
 
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-    ## Adding missing grouping variables: `chemical`, `st`, `county`
-
-``` r
 library(patchwork)
 patchwork::wrap_plots(ggplist_aml) + plot_layout(ncol = 4)
 ```
 
 <img src="report_yw3236_files/figure-markdown_github/all_state_slope_aml-1.png" style="display: block; margin: auto;" />
 
-### Combined TRI and SEER Geographic Association
+### TRI-SEER Dashboard
 
-#### Geographic Distribution of Cancers Relative to Industrial Waste Sites. (Jamesâ€™ choropleth)
+In the exploratory dashboard, we present several interactive plots that allow for users to explore industrial waste release and cancer incidences across different states and counties. These plots are derived from our exploratory analysis and take advantage of the Shiny web app interactivity that gives the user control to choose specific chemicals and cancers they might be interested in.
 
-\[side by side combined-- AML and Benzene\]\[Pleura and Lung?\]
+The interactive map allows you to visualize a state with several layers of data. One layer shows the including cancer slope in the given state (giving an idea of cancer trends, whether positive or negative in the given county). Further, an overlapping layer shows the relative amount of chemicals released in the county and a color scale is given for each layer. Three additional layers give the user the precise locations of the release sites for air, water, and land releases, and the circles are larger for larger releasing sites. Popup bubbles, upon clicking on a county shape, give actual values for slope and total release amount in the given county.
 
-### Dashboard
+Slope represents the estimated change in cancer incidence per 100,000 individuals from 1987 to 2009. Darker colors indicate decreasing cancer incidence over time while lighter colors indicate increasing cancer incidence over time.
 
-In the exploratory dashboard, we present several interactive plots that allow for users to explore industrial waste release and cancer incidences across different states and counties. These plots are derived from our exploratory analysis and take advantage of the Shiny web appâ€™s interactivity that gives the user control to choose specific chemicals and cancers they might be interested in.
-
-An interactive mapâ€¦.. Two plots that show chemical waste release and cancer incidence over time allows the user to better visualize trends.
+Cancer incidence over time is visualized in a spaghetti plot representing ten states in the US. Users can select different cancers they are interested in and visualize time trends. A second plot derived from the TRI dataset shows industrial waste released over time and can be filtered to examine different chemicals in different states. The stacked line plot shows the contribution of different waste release routes (air, water, land, offsite) to the total sum of waste released.
 
 VII. Additional Analysis
 ------------------------
-
-We investigated the relationship between chemical release and lung cancer incidence, at the county level, for seven known carcinogens. Multiple linear regression models were fitted with lung cancer incidence (per 100,000 individuals per year) as the main response and chemical release (log-pounds, by year) as the main effect. We adjusted for median income\* as a proxy for socioeconomic status and percent of current/previous smokers\*\*.
-
-\* median income (in thousands) was adjusted for at the county level, by year.
-
-\*\* percent of current/previous smokers was adjusted for at the state level, by year.
-
-**1. Formaldehyde**
-
-**Model 1 (adjusted *R*<sup>2</sup>: 0.21, p-value: &lt; 0.05):** Lung Cancer Incidence = 17.81 + 1.40 \* ln(pounds formaldehyde release) + 1.15 \* (percent current/previous smokers) - 2.77e-7 \* (median income)
-
-We conclude that formaldehyde release is a significant predictor of lung cancer incidence, adjusting for smoking rates and median income. For every ln(pound) increase in formaldehyde release, we expect 1.4 additional case of of lung cancer per 100,000 persons (p-value &lt; 0.01).
 
 VIII. Discussion
 ----------------
 
 ### Future Direction
 
-There are two future directions that are generated by our project. First, exposing to certain chemicals can be a causal factor for lung cancer, however, certain gene mutations can also predict lung cancer. Future research could be conducted by analyzing lung cancer patientsâ€™ gene information and add it as a potential predictor in the regression model that we produced in the additional analysis. Second, waste management policy could be improved by taking advantage of the information provided in our project.
+We recognize that there are many contributing factors towards cancer incidence and our analysis on lung cancer is a simple model of a complex disease. In the future we would want to adjust for additional confounding variables to better understand the effect of industrial waste on cancer outcomes. Finding more specific measurements of exposure and disease such as age-adjusted cancer incidences or patient’s distance from industrial factories would benefit our analysis as well.
+
+Users should be careful to not conclude causation from our model and visualizations. These tools are meant to better inform individuals about the environmental hazards in their states. However, we hope that our website and data tools can help researchers to explore new hypotheses or evaluate well-established ones.
+
+There are two future directions that are generated by our project. First, exposure to certain chemicals can be a causal factor for lung cancer, however, certain gene mutations can also predict lung cancer. Future research could be conducted by analyzing lung cancer patients’ gene information and add it as a potential predictor in the regression model that we produced in the additional analysis. Second, waste management policy could be improved by taking advantage of the information provided in our project.
 
 Extra: Slope is defined as the coefficient estimate abstracted from a simple linear regression with incidence (per 100,000 persons) as the response and year as the predictor.
 
