@@ -392,7 +392,7 @@ Cancer incidence over time is visualized in a spaghetti plot representing ten st
 
 ### Data Processing
 
-To explore relationships between chemical release and lung cancer incidence, we joined datasets for Toxic Release Inventory, SEER, income data from US Census, and tobacco use from BRFSS Surveys. Since we were most interested in exposure-response relationships, we excluded chemicals reported less than 10 times, either in separate years or separate counties. For cancer incidence measures, we excluded counties with a population under 50,000, since small population sizes may lack the statistical power to detect effects in cancer risk. Next, we log-transformed quantity of chemical release into ln(pound) units; this measure had stronger linear relationships with cancer incidence. State level smoking prevalence, defined as previous or current smokers, was extracted from the BRFSS dataset for years 1996 to 2016. 
+To explore relationships between chemical release and lung cancer incidence, we joined datasets for Toxic Release Inventory, SEER, income data from US Census, and tobacco use from BRFSS Surveys. Since we were most interested in exposure-response relationships, we excluded chemicals reported less than 10 times, either in separate years or separate counties. For cancer incidence measures, we excluded counties with a population under 50,000, since small population sizes may lack the statistical power to detect effects on cancer risk. Next, we log-transformed quantity of chemical release into ln(pound) units to improve linearity of the relationship between chemical release and cancer incidence. Lastly, we linked smoking prevalence from the BRFSS dataset for years 1996 to 2016. 
 
 ```{r}
 # import summarized cancer & toxicity datafile
