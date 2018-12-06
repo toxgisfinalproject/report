@@ -292,8 +292,9 @@ cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
       group_by(name) %>%
       mutate(prev_kurt = e1071::kurtosis(prevalence)) %>%
       nest() %>%
-      mutate(county_prev_lm = map(data, ~lm(formula = prevalence ~ year, data = .x)) ) %>%
-      mutate(lm_tidy = map(county_prev_lm, broom::tidy, conf.int = TRUE)) %>%
+      mutate(county_prev_lm = 
+      purrr::map(data, ~lm(formula = prevalence ~ year, data = .x)) ) %>%
+      mutate(lm_tidy = purrr::map(county_prev_lm, broom::tidy, conf.int = TRUE)) %>%
       select(-data, -county_prev_lm) %>%
       unnest() %>%
       filter(term == "year")
@@ -332,7 +333,7 @@ all_states <- cancer_pop_df %>%
   pull(st) %>% 
   unique()
 ggplist_aml <- all_states %>% 
-  map(.x = ., .f = cancer_slope_plot, spec_cancer = "AML", print = F)
+  purrr::map(.x = ., .f = cancer_slope_plot, spec_cancer = "AML", print = F)
 
 library(patchwork)
 patchwork::wrap_plots(ggplist_aml) + plot_layout(ncol = 4)
@@ -362,7 +363,7 @@ cancer_county_chem_pop = readRDS("./data/cancer_county_chem_pop.rds") %>%
     total_rel_summ != 0,
     pop_est > 50000) %>% 
   mutate(
-    chemical = map(chemical, tolower),
+    chemical = purrr::map(chemical, tolower),
     chemical = str_replace(chemical, " ", "_"),
     total_rel_log = log(total_rel_summ))
 ```
@@ -387,7 +388,7 @@ lung_spread = cancer_chem_lung %>%
 ```
 
 Link Median Income from Census Data
-```{r}
+```{r median_income_cleaning, eval = F}
 census_income_df = readRDS("./data/census_income_pop_tidy.rds") %>% 
   janitor::clean_names() %>% 
   separate(area_name, into = c("county", "st"), sep = ",") %>% 
@@ -407,7 +408,7 @@ lung_spread_income = dplyr::left_join(lung_spread, census_income_df, by = c("cou
 ```
 
 Link Smoking Prevalence Data from BRFSS
-```{r}
+```{r }
 tobacco_2010_present = read_csv(file = "./data/BRFD_tobacco_2010_present.csv") %>% 
   filter(Response == "Never") %>% 
   dplyr::select(year = "YEAR", st = "LocationAbbr", response = "Response", percent_never = "Data_Value") %>%
