@@ -316,9 +316,13 @@ cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = T)
 A look at all 10 states in the study is shown below:
 
 ```{r}
-ggplist_benzene <- 1987:2009 %>%
-map(.x = ., .f = state_chem_map,spec_state = "ca", spec_chem = "BENZENE", print = F)
-patchwork::wrap_plots(ggplist_benzene)
+all_states <- county_cancer_chem %>% 
+  pull(st) %>% 
+  unique()
+ggplist_aml <- all_states %>% 
+  map(.x = ., .f = cancer_slope_plot, spec_cancer = "AML", print = F)
+library(patchwork)
+patchwork::wrap_plots(ggplist_aml) + plot_layout(ncol = 4)
 ```
 
 ### Combined TRI and SEER Geographic Association 
