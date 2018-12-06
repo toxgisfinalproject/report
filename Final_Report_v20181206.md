@@ -16,7 +16,7 @@ It is well known that exposure to certain chemicals can be a causal factor for m
 II. Related Work
 ----------------
 
-Extensive research has been done regarding the carcinogenicity of many toxic chemicals. A research article “Association between Six Environmental Chemicals and Lung Cancer Incidence in the United States” was particularly inspiring because it used publicly available datasets (Toxic Release Inventory and Surveillance, Epidemiology, and End Results) to link environmental waste to cancer. It explained what chemicals that are important determinants in lung cancer development. Based on this research article, we wanted to conduct further research to find out the relationships between major chemical waste exposures and common cancers (including lung cancer).
+Extensive research has been done regarding the carcinogenicity of many toxic chemicals. A research article [“Association between Six Environmental Chemicals and Lung Cancer Incidence in the United States”](https://www.ncbi.nlm.nih.gov/pubmed/21776439) was particularly inspiring because it used publicly available datasets (Toxic Release Inventory and Surveillance, Epidemiology, and End Results) to link environmental waste to cancer. The investigation identified several chemicals that increase risk for lung cancer. Based on this preliminary work, we wanted to conduct further research to characterize relationships between major chemical waste exposures and common cancers (including lung cancer).
 
 III. Initial Questions
 ----------------------
@@ -569,7 +569,9 @@ We investigated the relationship between chemical release and lung cancer incide
 
 Adjusting for median income, vinyl-acetate release approaches significance (p-value = 0.07) as a predictor of lung cancer incidence. In separate analyses, we find that smoking prevalence and vinyl acetate are independent predictors of lung cancer incidence. Furthermore, vinyl acetate release and smoking prevalence are correlated to an extent that is similar to the relationship between vinyl acetate and lung cancer incidence. Together in multiple linear regression model, both are not significant predictors, suggesting that these two predictors may be redundant and accounting for similar portions of the random errors in the model. If these are redundant variables, we might conclude that there is some relationship that makes the variables non-independent in nature. Indeed, this may be the case: In a [mass spectrometry analysis of cigarette data](https://www.ncbi.nlm.nih.gov/pubmed/12433113), it was found that vinyl acetate is a component of cigarette smoke. Therefore, we removed smoking prevalence as a covariate from our model.
 
-\* median income (in thousands) was adjusted for at the county level, by year. \*\* percent of current/previous smokers was adjusted for at the state level, by year.
+\* median income (in thousands) was adjusted for at the county level, by year.
+
+\*\* percent of current/previous smokers was adjusted for at the state level, by year.
 
 **1. Formaldehyde**
 
