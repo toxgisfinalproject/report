@@ -1,3 +1,4 @@
 cancer_county_chem_pop.rds filter=lfs diff=lfs merge=lfs -text
 data/ filter=lfs diff=lfs merge=lfs -text
 data/tri_df.rds filter=lfs diff=lfs merge=lfs -text
+data/cancer_county_chem_pop.rds filter=lfs diff=lfs merge=lfs -text
