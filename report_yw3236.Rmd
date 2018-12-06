@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r include = FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = T, message = FALSE, warning = FALSE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, cache = T, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(plotly)
 ```
