@@ -221,3 +221,37 @@ saveRDS(cancer_county_chem_pop,"cancer_county_chem_pop.rds")
 
 ```
 
+Adina's tidy code
+
+```{r}
+tri_df = tri_temp_df_dplyr %>% 
+  janitor::clean_names()
+# Select only variables we are interested in
+# Filter to only include chemicals that are classified as carcinogens
+# Convert to factor carcinogen and metal variables
+tri_df = tri_df %>% 
+  select(year:facility_name, city:industry_sector, primary_naics, chemical, clear_air_act_chemical:carcinogen, unit_of_measure:x8_8_one_time_release, parent_company_name, -frs_id, -bia_code, -tribe) %>% 
+  filter(carcinogen == "YES") %>% 
+  mutate(state = st,
+         carcinogen = as.factor(carcinogen),
+         metal = as.factor(metal))
+# Convert numeric variables from character type
+# Specify column numbers that need to be converted
+cols.num = c(1, 8, 9, 21:86)
+tri_df[cols.num] = map_df(.x = tri_df[cols.num], ~as.numeric(.x))
+# Simplify waste release and management data
+# Sum together onsite release categories: air, water, land
+# Remove repetitive waste release information
+tri_df = tri_df %>% 
+  mutate(air_onsite_release = x5_1_fugitive_air + x5_2_stack_air,
+         water_onsite_release = x5_3_water,
+         land_onsite_release = rowSums(select(.,x5_4_underground:x5_5_4_other_disposal)),
+         potw_total_transfers = x6_1_potw_total_transfers,
+         one_time_release = x8_8_one_time_release) %>% 
+  select(year:county, -st, state, zip:unit_of_measure, air_onsite_release, 
+         water_onsite_release, land_onsite_release, 
+         on_site_release_total, potw_total_transfers, off_site_release_total, 
+         off_site_recycled_total,off_site_recovery_total, off_site_treated_total, 
+         total_releases, prod_waste_8_1_thru_8_7, parent_company_name)
+```
+
