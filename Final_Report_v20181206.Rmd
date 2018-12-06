@@ -15,6 +15,8 @@ library(plotly)
 
 Our data can be accessed in this [GitHub repository](https://github.com/toxgisfinalproject/data).
 
+The SEER dataset was exceptionally large (4GB uncompressed) and we initially took many approaches to getting the data in a small, manageable form.  The original dataset is a self-extracting archive, which is not readily usable in OSX. Furthermore, based on a signed SEER agreement, we cannot post the dataset publicly. The TRI data also involved large data files (~1.39GB of CSV flat files) that took a very long time to pull in and clean, hence our reliance on parallelism. Most machines could not handle the SEER data cleaning computationally. A merged SEER-TRI dataset of 8MB compressed (found in our "data" folder) permitted ease of use for group members and TAs. Please view "data_cleaning_combined.rmd" for raw cleaning of TRI-SEER data.
+
 ## I. Motivation
 
 It is well known that exposure to certain chemicals can be a causal factor for many cancers, and many of the chemicals released from industry are carcinogenic. For this project, we wanted to know if we could use datasets that are publicly available to see if there is a geographic association between incidences of cancer and amount of toxic waste dumping. We hope our project results can help people understand the importance of reducing the amount of toxic waste dumping and create a cleaner, healthier living environment. 

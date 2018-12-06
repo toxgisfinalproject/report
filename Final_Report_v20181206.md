@@ -8,6 +8,8 @@ Data Access
 
 Our data can be accessed in this [GitHub repository](https://github.com/toxgisfinalproject/data).
 
+The SEER dataset was exceptionally large (4GB uncompressed) and we initially took many approaches to getting the data in a small, manageable form. The original dataset is a self-extracting archive, which is not readily usable in OSX. Furthermore, based on a signed SEER agreement, we cannot post the dataset publicly. The TRI data also involved large data files (~1.39GB of CSV flat files) that took a very long time to pull in and clean, hence our reliance on parallelism. Most machines could not handle the SEER data cleaning computationally. A merged SEER-TRI dataset of 8MB compressed (found in our "data" folder) permitted ease of use for group members and TAs. Please view "data\_cleaning\_combined.rmd" for raw cleaning of TRI-SEER data.
+
 I. Motivation
 -------------
 
