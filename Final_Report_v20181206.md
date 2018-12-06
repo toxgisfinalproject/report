@@ -456,7 +456,7 @@ VII. Additional Analysis on Lung Cancer Incidence
 
 ### Data Processing
 
-To explore relationships between chemical release and lung cancer incidence, we joined datasets for Toxic Release Inventory, SEER, income data from US Census, and tobacco use from BRFSS Surveys. Since we were most interested in exposure-response relationships, we excluded chemicals reported less than 10 times, either in separate years or separate counties. For cancer incidence measures, we excluded counties with a population under 50,000, since small population sizes may lack the statistical power to detect effects in cancer risk. Next, we log-transformed quantity of chemical release into ln(pound) units; this measure had stronger linear relationships with cancer incidence. State level smoking prevalence, defined as previous or current smokers, was extracted from the BRFSS dataset for years 1996 to 2016.
+To explore relationships between chemical release and lung cancer incidence, we joined datasets for Toxic Release Inventory, SEER, income data from US Census, and tobacco use from BRFSS Surveys. Since we were most interested in exposure-response relationships, we excluded chemicals reported less than 10 times, either in separate years or separate counties. For cancer incidence measures, we excluded counties with a population under 50,000, since small population sizes may lack the statistical power to detect effects on cancer risk. Next, we log-transformed quantity of chemical release into ln(pound) units to improve linearity of the relationship between chemical release and cancer incidence. Lastly, we linked smoking prevalence from the BRFSS dataset for years 1996 to 2016.
 
 ``` r
 # import summarized cancer & toxicity datafile
@@ -578,6 +578,10 @@ For every ln(pound) increase in formaldehyde release, we expect 1.4 additional c
 fit_formaldehyde = lung_income_tobacco %>% 
   lm(incidence_100k ~ formaldehyde + percent_smoke + med_income, data = .) 
 
+chem_1 = summary(fit_formaldehyde) %>% 
+  broom::tidy() %>% 
+  filter(term == "formaldehyde")
+
 summary(fit_formaldehyde) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -588,12 +592,6 @@ summary(fit_formaldehyde) %>%
 | formaldehyde   |   1.4010217|  0.1924513|   7.279876|  0.00e+00|
 | percent\_smoke |   1.1523015|  0.0706391|  16.312523|  0.00e+00|
 | med\_income    |  -0.2776292|  0.0395100|  -7.026816|  0.00e+00|
-
-``` r
-chem_1 = summary(fit_formaldehyde) %>% 
-  broom::tidy() %>% 
-  filter(term == "formaldehyde")
-```
 
 **2. acrylonitrile**
 
@@ -606,6 +604,10 @@ For every ln(pound) increase in formaldehyde release, we expect 4.09 additional 
 fit_acrylonitrile = lung_income_tobacco %>% 
   lm(incidence_100k ~ acrylonitrile + percent_smoke + med_income, data = .) 
 
+chem_2 = summary(fit_acrylonitrile) %>% 
+  broom::tidy() %>%
+  filter(term == "acrylonitrile")
+
 summary(fit_acrylonitrile) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -616,12 +618,6 @@ summary(fit_acrylonitrile) %>%
 | acrylonitrile  |   4.0944236|   0.5693109|   7.191894|  0.0000000|
 | percent\_smoke |   0.8232187|   0.1873149|   4.394838|  0.0000140|
 | med\_income    |  -0.1797664|   0.1110915|  -1.618182|  0.1063498|
-
-``` r
-chem_2 = summary(fit_acrylonitrile) %>% 
-  broom::tidy() %>%
-  filter(term == "acrylonitrile")
-```
 
 **3. 1,3-butadiene**
 
@@ -634,6 +630,11 @@ For every ln(pound) increase in 1,3-butadiene release, we expect 2.24 additional
 fit_butadiene = lung_income_tobacco %>% 
   lm(incidence_100k ~ x1_3_butadiene + percent_smoke + med_income, data = .) 
 
+chem_3 = summary(fit_butadiene) %>% 
+  broom::tidy() %>% 
+  filter(term == "x1_3_butadiene") %>% 
+  mutate(term = str_replace(term, "x1_3_butadiene", "1,3-butadiene"))
+
 summary(fit_butadiene) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -644,13 +645,6 @@ summary(fit_butadiene) %>%
 | x1\_3\_butadiene |   2.2447643|  0.3815991|   5.882520|  0.0000000|
 | percent\_smoke   |   1.5632049|  0.1062535|  14.712025|  0.0000000|
 | med\_income      |  -0.3894833|  0.0926827|  -4.202328|  0.0000300|
-
-``` r
-chem_3 = summary(fit_butadiene) %>% 
-  broom::tidy() %>% 
-  filter(term == "x1_3_butadiene") %>% 
-  mutate(term = str_replace(term, "x1_3_butadiene", "1,3-butadiene"))
-```
 
 **4. epichlorohydrin**
 
@@ -663,6 +657,10 @@ For every ln(pound) increase in epichlorohydrin release, we expect 2.18 addition
 fit_epichlorohydrin = lung_income_tobacco %>% 
   lm(incidence_100k ~ epichlorohydrin, data = .) 
 
+chem_4 = summary(fit_epichlorohydrin) %>% 
+  broom::tidy() %>% 
+  filter(term == "epichlorohydrin")
+
 summary(fit_epichlorohydrin) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -671,12 +669,6 @@ summary(fit_epichlorohydrin) %>%
 |:----------------|----------:|----------:|----------:|--------:|
 | (Intercept)     |  59.584501|  2.0377595|   29.24020|        0|
 | epichlorohydrin |   2.181459|  0.3259548|    6.69252|        0|
-
-``` r
-chem_4 = summary(fit_epichlorohydrin) %>% 
-  broom::tidy() %>% 
-  filter(term == "epichlorohydrin")
-```
 
 **5. vinyl-acetate**
 
@@ -689,6 +681,11 @@ In a regression model, vinyl-acetate release approaches significance (p-value = 
 fit_vinyl_acetate = lung_income_tobacco %>% 
   lm(incidence_100k ~ vinyl_acetate + med_income, data = .) 
 
+chem_5 = summary(fit_vinyl_acetate) %>% 
+  broom::tidy() %>% 
+  filter(term == "vinyl_acetate") %>% 
+  mutate(term = str_replace(term, "vinyl_acetate", "vinyl-acetate"))
+
 summary(fit_vinyl_acetate) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -698,13 +695,6 @@ summary(fit_vinyl_acetate) %>%
 | (Intercept)    |  105.4291723|  4.8277756|   21.838043|  0.0000000|
 | vinyl\_acetate |    0.6085737|  0.3341701|    1.821149|  0.0690524|
 | med\_income    |   -0.7938396|  0.0682236|  -11.635854|  0.0000000|
-
-``` r
-chem_5 = summary(fit_vinyl_acetate) %>% 
-  broom::tidy() %>% 
-  filter(term == "vinyl_acetate") %>% 
-  mutate(term = str_replace(term, "vinyl_acetate", "vinyl-acetate"))
-```
 
 **6. ethyl-acrylate**
 
@@ -717,6 +707,11 @@ For every ln(pound) increase in ethyl-acrylate release, we expect 1.24 additiona
 fit_ethyl_acrylate = lung_income_tobacco %>% 
   lm(incidence_100k ~ ethyl_acrylate + percent_smoke + med_income, data = .) 
 
+chem_6 = summary(fit_ethyl_acrylate) %>% 
+  broom::tidy() %>% 
+  filter(term == "ethyl_acrylate") %>% 
+  mutate(term = str_replace(term, "ethyl_acrylate", "ethyl-acrylate"))
+
 summary(fit_ethyl_acrylate) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -727,13 +722,6 @@ summary(fit_ethyl_acrylate) %>%
 | ethyl\_acrylate |   1.2382589|  0.4327826|   2.861157|  0.0044601|
 | percent\_smoke  |   0.8824776|  0.1655538|   5.330458|  0.0000002|
 | med\_income     |  -0.7257167|  0.0912372|  -7.954172|  0.0000000|
-
-``` r
-chem_6 = summary(fit_ethyl_acrylate) %>% 
-  broom::tidy() %>% 
-  filter(term == "ethyl_acrylate") %>% 
-  mutate(term = str_replace(term, "ethyl_acrylate", "ethyl-acrylate"))
-```
 
 **7. trans-1,3-dichloropropene**
 
@@ -746,6 +734,11 @@ Trans-1,3-dichloropropene is an organochlorine compound primarily used in farmin
 fit_dichloropropene = lung_income_tobacco %>% 
   lm(incidence_100k ~ trans_1_3_dichloropropene, data = .) 
 
+chem_7 = summary(fit_dichloropropene) %>% 
+  broom::tidy() %>% 
+  filter(term == "trans_1_3_dichloropropene") %>% 
+  mutate(term = str_replace(term, "trans_1_3_dichloropropene", "trans-1,3-dichloropropene"))
+
 summary(fit_dichloropropene) %>% 
   broom::tidy() %>% knitr::kable()
 ```
@@ -754,13 +747,6 @@ summary(fit_dichloropropene) %>%
 |:-----------------------------|----------:|----------:|----------:|--------:|
 | (Intercept)                  |  39.570731|  0.8338682|   47.45442|        0|
 | trans\_1\_3\_dichloropropene |   4.778665|  0.2153841|   22.18671|        0|
-
-``` r
-chem_7 = summary(fit_dichloropropene) %>% 
-  broom::tidy() %>% 
-  filter(term == "trans_1_3_dichloropropene") %>% 
-  mutate(term = str_replace(term, "trans_1_3_dichloropropene", "trans-1,3-dichloropropene"))
-```
 
 ### Summary Table for Slope Coefficients
 
