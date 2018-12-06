@@ -115,10 +115,11 @@ Here we change the states into FIPS codes for merging:
 ``` r
 state2abb <- tolower(state.abb)
 names(state2abb) <- tolower(state.name)
-
 can_inc_by_coun_st <- can_inc_by_coun %>% 
   mutate(state_abb = state2abb[state_name])
 ```
+
+TRI data that contained lines for individual chemicals released from a single facility on a certain year was pulled in from several large comma separated value files, combined by rows, and summarized similarly such that the total number of released pounds by chemical was obtained for every chemical in every county. Only carcinogens were summarized in this dataset.
 
 ``` r
 rel_summary_county <- tri_temp_df_dplyr %>% 
@@ -142,7 +143,7 @@ county_cancer_chem <- rel_summary_county %>%
 map(county_cancer_chem, ~sum(is.na(.)))
 ```
 
-Population:
+Census codes were obtained from the master datasheet (“Mastdata.xls”) for every year from 1979 to 2009. Utilizing a custom function to read all the sheets from an excel file into a list of sheets, several individual excel files were read in after conversion to xlsx format (INC01 to INC03, PVY01 to PVY02, PST01 and PST02, and IPE01). Area name and fips were extracted along with the columns for income and population estimates for the respective year. These columns were converted from wide to long format and census codes naming the original columns were resolved to years. Two dataframes resulted from this, one for median household income by county and one for population estimates.
 
 ``` r
 read_excel_allsheets_dfc <- function(fn) {
@@ -168,7 +169,7 @@ pop_cols_desc <- data_dict %>%
 
 cencode2year <- c(income_cols_desc %>% pull(year), pop_cols_desc %>% pull(year)) 
 names(cencode2year) <- c(income_cols_desc %>% pull(item_id), pop_cols_desc %>% pull(item_id))
-
+  
 census_income_pop_all <- list("./census_income/INC01.xlsx",
                           "./census_income/INC02.xlsx",
                           "./census_income/INC03.xlsx",
@@ -218,7 +219,7 @@ cancer_county_chem_pop <- county_cancer_chem %>%
 saveRDS(cancer_county_chem_pop,"cancer_county_chem_pop.rds") 
 ```
 
-Adina's tidy code:
+The TRI dataset was further filtered down to only include carcinogens as our primary focus is cancer. Variables were converted to their appropriate type (numeric, factor). Based off of other research studies, we summarized total waste release between onsite and offsite release. Onsite waste release was further summarized into three categories: air, water, and land. The data was then simplified by removing variables that were not of interest to us in our analyses. Some examples include industrial codes (NAICS, SIC) and specific waste release routes (ex. wastewater treatment for non-metals, offsite incineration of non-metals):
 
 ``` r
 tri_df = tri_temp_df_dplyr %>% 

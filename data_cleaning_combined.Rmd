@@ -122,10 +122,10 @@ Here we change the states into FIPS codes for merging:
 ```{r}
 state2abb <- tolower(state.abb)
 names(state2abb) <- tolower(state.name)
-
 can_inc_by_coun_st <- can_inc_by_coun %>% 
   mutate(state_abb = state2abb[state_name])
 ```
+TRI data that contained lines for individual chemicals released from a single facility on a certain year was pulled in from several large comma separated value files, combined by rows, and summarized similarly such that the total number of released pounds by chemical was obtained for every chemical in every county. Only carcinogens were summarized in this dataset.
 ```{r}
 rel_summary_county <- tri_temp_df_dplyr %>% 
   janitor::clean_names() %>% 
