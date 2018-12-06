@@ -252,8 +252,6 @@ tri_df %>%
 
 ![](Final_Report_v20181206_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
-Based off of this barplot, the top five states that produce the most carcinogenic waste are Texas, Louisiana, Indiana, Ohio, and Pennsylvania.
-
 #### Top Industries that Produce the Most Carcinogenic Waste
 
 ##### Top Industries that Produce the Most Carcinogenic Waste in the U.S.
@@ -573,7 +571,7 @@ Adjusting for median income, vinyl-acetate release approaches significance (p-va
 
 \*\* percent of current/previous smokers was adjusted for at the state level, by year.
 
-**1. Formaldehyde**
+##### **1. Formaldehyde**
 
 **Model 1 (adjusted *R*<sup>2</sup>: 0.21, p-value: &lt; 0.05):** Lung Cancer Incidence = 17.81 + 1.40 \* ln(pounds formaldehyde release) + 1.15 \* (percent current/previous smokers) - 2.77e-7 \* (median income)
 
@@ -599,7 +597,7 @@ summary(fit_formaldehyde) %>%
 | percent\_smoke |   1.1523015|  0.0706391|  16.312523|  0.00e+00|
 | med\_income    |  -0.2776292|  0.0395100|  -7.026816|  0.00e+00|
 
-**2. acrylonitrile**
+##### **2. acrylonitrile**
 
 **Model 2 (adjusted *R*<sup>2</sup>: 0.29, p-value: &lt; 0.05):** Lung Cancer Incidence = 24.37 + 4.09 \* ln(pounds acrylonitrile release) + 8.23e-01 \* (percent current/previous smokers) - 0.18 \* (median income)
 
@@ -625,7 +623,7 @@ summary(fit_acrylonitrile) %>%
 | percent\_smoke |   0.8232187|   0.1873149|   4.394838|  0.0000140|
 | med\_income    |  -0.1797664|   0.1110915|  -1.618182|  0.1063498|
 
-**3. 1,3-butadiene**
+##### **3. 1,3-butadiene**
 
 **Model 3 (adjusted *R*<sup>2</sup>: 0.41, p-value: &lt; 0.05):** Lung Cancer Incidence = 8.32 + 2.24 \* ln(pounds 1,3-butadiene release) + 1.56 \* (percent current/previous smokers) - 0.39 \* (median income)
 
@@ -652,7 +650,7 @@ summary(fit_butadiene) %>%
 | percent\_smoke   |   1.5632049|  0.1062535|  14.712025|  0.0000000|
 | med\_income      |  -0.3894833|  0.0926827|  -4.202328|  0.0000300|
 
-**4. epichlorohydrin**
+##### **4. epichlorohydrin**
 
 **Model 4 (adjusted *R*<sup>2</sup>: 0.15, p-value: &lt; 0.05):** Lung Cancer Incidence = 59.58 + 2.18 \* ln(pounds epichlorohydrin release)
 
@@ -676,7 +674,7 @@ summary(fit_epichlorohydrin) %>%
 | (Intercept)     |  59.584501|  2.0377595|   29.24020|        0|
 | epichlorohydrin |   2.181459|  0.3259548|    6.69252|        0|
 
-**5. vinyl-acetate**
+##### **5. vinyl-acetate**
 
 **Model 5 (adjusted *R*<sup>2</sup>: 0.20, p-value: &lt; 0.05):** Lung Cancer Incidence = 105 + 0.61 \* ln(pounds vinyl-acetate release) - 0.79 \* (median income)
 
@@ -702,7 +700,7 @@ summary(fit_vinyl_acetate) %>%
 | vinyl\_acetate |    0.6085737|  0.3341701|    1.821149|  0.0690524|
 | med\_income    |   -0.7938396|  0.0682236|  -11.635854|  0.0000000|
 
-**6. ethyl-acrylate**
+##### **6. ethyl-acrylate**
 
 **Model 6 (adjusted *R*<sup>2</sup>: 0.25, p-value: &lt; 0.05):** Lung Cancer Incidence = 60.63 + 1.24 \* ln(pounds ethyl-acrylate release) + 0.88 \* (percent current/previous smokers) - 0.72 \* (median income)
 
@@ -729,7 +727,7 @@ summary(fit_ethyl_acrylate) %>%
 | percent\_smoke  |   0.8824776|  0.1655538|   5.330458|  0.0000002|
 | med\_income     |  -0.7257167|  0.0912372|  -7.954172|  0.0000000|
 
-**7. trans-1,3-dichloropropene**
+##### **7. trans-1,3-dichloropropene**
 
 **Model 7 (adjusted *R*<sup>2</sup>: 0.90, p-value: &lt; 0.05):** Lung Cancer Incidence = 39.57 + 4.78 \* ln(pounds trans-1,3-dichloropropene release)
 
