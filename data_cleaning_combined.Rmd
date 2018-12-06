@@ -5,10 +5,11 @@ date: "December 5, 2018"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 library(SEERaBomb)
 ```
+
 A package with an odd name, SEERaBomb, was created specifically for reading this data in R, utilizing the dplyr framework (http://rpubs.com/mascha/mergingSEERData).
 
 ```{r}
@@ -81,6 +82,7 @@ pickFields <- function(sas, picks = c("casenum", "reg", "race", "sex", "agedx",
 df <- pickFields(sas = df, picks = df$names) 
 mkSEER(df, seerHome = "./seer_data/ascii/SEER_1973_2015_TEXTDATA/")
 ```
+
 The SEER data is now in a very large flatfile in compressed RDA format. We'll summarize this data shortly and combine it with the tox data, but first, we'll resolve the FIPS codes to state and county names using the maps package.
 
 ```{r county_data, cache = TRUE}
@@ -94,7 +96,6 @@ simplify = T) %>% .[,2])
 #saveRDS(object = canc_w_names,file = "canc_w_names.rds")
 ```
 
-
 TRI data processing used for main cancer-tox dataset simply involves pulling in all the CSV files (in the tri_temporal_fixed folder) and row binding them. All columns are converted to character, initially to avoid errors. Parallelization through the furrr package was used to speed up the process and the difference was quite noticable. Reading in this data correctly was a time consuming process otherwise.
 
 ```{r}
@@ -106,14 +107,18 @@ furrr::future_map_dfr(.f = read_csv,
                       )
 saveRDS(object = tri_temp_df_dplyr, "tri_temp_df_dplyr.rds")
 ```
+
 Summarization of cancer cases by county and year:
+
 ```{r}
 can_inc_by_coun <- canc_w_names %>% 
   select(state_name,county_name,cancer,stcnty,yrdx) %>% 
   group_by(state_name,county_name,cancer,stcnty,yrdx) %>% 
   summarise(n = n()) 
 ```
+
 Here we change the states into FIPS codes for merging:
+
 ```{r}
 state2abb <- tolower(state.abb)
 names(state2abb) <- tolower(state.name)
@@ -131,8 +136,8 @@ rel_summary_county <- tri_temp_df_dplyr %>%
   group_by(chemical,st,county,year) %>% 
   summarize(total_rel_summ = sum(total_releases)) %>% 
   arrange(-total_rel_summ)
-
 ```
+
 Now, we'll merge the TRI summary data with the cancer (SEER) county-summarized data, using an inner join by county, state, and year, selecting only the merged chemical, state, county, total amount released in pounds, the type of cancer, the number of cases, and the FIPS code (stcnty as the original data called it).
 
 ```{r}
@@ -147,7 +152,7 @@ map(county_cancer_chem, ~sum(is.na(.)))
 Population:
 ```{r pop_income}
 read_excel_allsheets_dfc <- function(fn) {
-  sheets<-readxl::excel_sheets(fn)
+  sheets <- readxl::excel_sheets(fn)
   sheet_list <- map2_dfc(.x = fn,.y = sheets, .f = ~readxl::read_excel(path = .x, sheet = .y))
   return(sheet_list)
 }
@@ -201,11 +206,12 @@ census_income_pop_tidy <- (census_inc_tidy %>%
 # saveRDS(census_income_pop_tidy,"census_income_pop_tidy.rds")
  saveRDS(census_pop_tidy,"census_pop_tidy.rds")
 # saveRDS(census_inc_tidy,"census_inc_tidy.rds")
-
 ```
+
 The population estimates are then combined with the merged aggregated toxic release inventory data and the aggregated cancer cases by county, cancer type, and year.
 String padding was used to make the FIPS code from SEER compatible with the FIPS code from the census data, and incidence was calculated by the number of diagnosed cases for a specific cancer in a given year divided by the population estimate for the county for that specific year. Cancer "Prevalence" was later termed cancer "incidence" in later data analyses.
 The final variables used in this dataset contain county information, total releases, the number of cancer patients diagnosed, the type of cancer, the population estimate, and the incidence.
+
 ```{r}
 census_pop_tidy <- readRDS("census_pop_tidy.rds") %>% 
   mutate(year_pop = as.integer(year_pop))
