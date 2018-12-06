@@ -367,8 +367,9 @@ cancer_slope_plot <- function(spec_state, spec_cancer, print = TRUE)
 cancer_slope_plot(spec_state = "ca", spec_cancer = "AML", print = F)
 ```
 
-A look at all 10 states in the study is shown below:
+Above, we notice that Mariposa County, CA (the only county colored in bright yellow, indicating a high slope estimate) has a high increase in cancer incidence for AML over time and really stands out visually. Although AML is linked with [Benzene exposure](https://www.ncbi.nlm.nih.gov/pubmed/17506065), the releases of benzene do not appear to be explanatory variable as the releases of benzene do not coincide with cancer incidence at the county level (see app), but we might find that there was a statewide increase in 2013 in benzene release [(see Chemical Release Over Time)](jamesdalg.shinyapps.io/seer_dash/). This among other factors may explain the change in cancer incidence.
 
+A look at all 10 states in the study is shown below. This is done by obtaining the list of unique names from the finalized dataset and utilizing the cancer_slope_plot function iteratively on all states, then using the patchwork library’s wrap plots to combine the data into a grid with 4 columns of plots.
 ```{r, all_state_slope_aml, fig.height = 20, fig.width = 20, fig.align = "center"}
 all_states <- cancer_pop_df %>% 
   pull(st) %>% 
@@ -379,6 +380,8 @@ ggplist_aml <- all_states %>%
 library(patchwork)
 patchwork::wrap_plots(ggplist_aml) + plot_layout(ncol = 4)
 ```
+
+We also find that in New Jersey, Ocean County and Cumberland County has a positive trend of AML cases across time. Although benzene doesn’t have a direct geographical relationship, further exploration of chemicals may turn up a few leads.
 
 ### TRI-SEER Dashboard
 
