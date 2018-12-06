@@ -569,7 +569,9 @@ We investigated the relationship between chemical release and lung cancer incide
 
 Adjusting for median income, vinyl-acetate release approaches significance (p-value = 0.07) as a predictor of lung cancer incidence. In separate analyses, we find that smoking prevalence and vinyl acetate are independent predictors of lung cancer incidence. Furthermore, vinyl acetate release and smoking prevalence are correlated to an extent that is similar to the relationship between vinyl acetate and lung cancer incidence. Together in multiple linear regression model, both are not significant predictors, suggesting that these two predictors may be redundant and accounting for similar portions of the random errors in the model. If these are redundant variables, we might conclude that there is some relationship that makes the variables non-independent in nature. Indeed, this may be the case: In a [mass spectrometry analysis of cigarette data](https://www.ncbi.nlm.nih.gov/pubmed/12433113), it was found that vinyl acetate is a component of cigarette smoke. Therefore, we removed smoking prevalence as a covariate from our model.
 
-\* median income (in thousands) was adjusted for at the county level, by year. \*\* percent of current/previous smokers was adjusted for at the state level, by year.
+\* median income (in thousands) was adjusted for at the county level, by year.
+
+\*\* percent of current/previous smokers was adjusted for at the state level, by year.
 
 **1. Formaldehyde**
 
